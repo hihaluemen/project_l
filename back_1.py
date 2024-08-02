@@ -20,7 +20,7 @@ def get_all_pre(work_l, adjacency_list):
                 predecessor_dict[successor].append(predecessor)
 
     # 输出前驱节点字典
-    print("前驱节点字典:", predecessor_dict)
+    # print("前驱节点字典:", predecessor_dict)
     return predecessor_dict
 
 
@@ -47,3 +47,81 @@ def get_adjacency(work_l):
         if node not in adjacency_list:
             adjacency_list[node] = []
     return adjacency_list
+
+
+def find_all_paths(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return [path]
+    if start not in graph:
+        return []
+    paths = []
+    for node in graph[start]:
+        if node not in path:
+            newpaths = find_all_paths(graph, node, end, path)
+            for newpath in newpaths:
+                paths.append(newpath)
+    return paths
+
+
+def find_all_possible_paths(graph):
+    all_paths = []
+    for start_node in graph.keys():
+        for end_node in graph.keys():
+            if start_node != end_node:
+                paths = find_all_paths(graph, start_node, end_node)
+                if paths:
+                    all_paths.extend(paths)
+    return all_paths
+
+
+def merge_shorter_paths(all_paths):
+    # 对路径列表按长度降序排序
+    all_paths.sort(key=len, reverse=True)
+
+    # 创建一个新列表来存储合并后的路径
+    merged_paths = []
+
+    for path in all_paths:
+        # 检查当前路径是否已经被包含在已有的路径中
+        if not any(set(path).issubset(set(p)) for p in merged_paths):
+            merged_paths.append(path)
+
+    return merged_paths
+
+
+def get_key_path(work_list: list, adjacency_dict: dict):
+    # 找到所有可能的路径
+    all_possible_paths = find_all_possible_paths(adjacency_dict)
+    # 合并较短的路径到较长的路径中
+    path_list = merge_shorter_paths(all_possible_paths)
+    # print(path_list)
+    time_list = [list(0 for i in range(len(path_list[i]))) for i in range(len(path_list))]
+
+    work_time_dict = dict()
+    for i in range(len(work_list)):
+        work_time_dict[work_list[i][0]] = work_list[i][4] - work_list[i][3]
+    # print("work_time_dict:",work_time_dict)
+    #获取时间差值
+    for i in range(len(path_list)):
+        for j in range(len(path_list[i])):
+            if path_list[i][j] in work_time_dict.keys():
+                time_list[i][j] = work_time_dict[path_list[i][j]]
+            else:
+                continue
+    # print("time_list:",time_list)
+    #将时间戳转换为天数
+    for i in range(len(time_list)):
+        for j in range(len(time_list[i])):
+            time_list[i][j] = time_list[i][j]/(24*60*60)+1
+    # print("time_list_second2day:",time_list)
+    #计算路径长度
+    path_len_sum_list = [sum(time_list[i]) for i in range(len(time_list))]
+    # print("path_len_sum_list:",path_len_sum_list)
+    #找出最大路径长度
+    index_max = path_len_sum_list.index(max(path_len_sum_list))
+    # print("index_max:",index_max)
+    #根据最大路径长度的索引，找出对应的路径
+    path_max = path_list[index_max]
+    # print("path_max:",path_max)
+    return path_max
