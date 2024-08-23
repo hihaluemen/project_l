@@ -37,7 +37,7 @@ async def create_workflow_diagram():
         print(key_path)
         # key_path = ['D', 'F', 'G', 'I', 'J']
         # 调用 get_position 函数
-        position, duration_date = get_position(
+        position, duration_date, edge_info = get_position(
             key_path,
             predecessor_dict,
             adjacency_list,
@@ -46,6 +46,8 @@ async def create_workflow_diagram():
         ans = dict()
         ans['position'] = position
         ans['duration_date'] = duration_date
+        ans['edge_info'] = edge_info
+
         return ans
     # except Exception as e:
     #     raise HTTPException(status_code=400, detail=str(e))

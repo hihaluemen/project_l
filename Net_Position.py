@@ -101,7 +101,21 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
     # plt.show()
     plt.savefig('workflow_diagram.png', dpi=300, bbox_inches='tight')
 
+    # 创建一个字典来存储边的信息
+    edge_info = {}
+    for node, successors in adjacency_list.items():
+        for succ in successors:
+            edge_key = f"{node}->{succ}"  # 使用字符串作为键
+            edge_info[edge_key] = {
+                'from_node': node,
+                'to_node': succ,
+                'from_pos': list(position[node]),  # 转换为列表
+                'to_pos': list(position[succ]),  # 转换为列表
+                'is_key_path': node in key_path and succ in key_path and key_path.index(succ) == key_path.index(
+                    node) + 1
+            }
+
     duration_date = dict()
     for work in works_l:
         duration_date[work[0]] = [work[-2], work[-1]]
-    return position, duration_date
+    return position, duration_date, edge_info
