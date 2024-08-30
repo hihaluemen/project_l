@@ -115,7 +115,37 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
                     node) + 1
             }
 
+    # 创建一个新的字典来存储直角边的信息
+    right_angle_edge_info = {}
+    for edge_key, edge in edge_info.items():
+        from_pos = edge['from_pos']
+        to_pos = edge['to_pos']
+        
+        # 计算直角边的中间点
+        mid_x = from_pos[0]
+        mid_y = to_pos[1]
+        
+        # 创建两个新的边：垂直边和水平边
+        vertical_key = f"{edge_key}_vertical"
+        horizontal_key = f"{edge_key}_horizontal"
+        
+        right_angle_edge_info[vertical_key] = {
+            'from_node': edge['from_node'],
+            'to_node': f"{edge['from_node']}_{edge['to_node']}_mid",
+            'from_pos': from_pos,
+            'to_pos': [mid_x, mid_y],
+            'is_key_path': edge['is_key_path']
+        }
+        
+        right_angle_edge_info[horizontal_key] = {
+            'from_node': f"{edge['from_node']}_{edge['to_node']}_mid",
+            'to_node': edge['to_node'],
+            'from_pos': [mid_x, mid_y],
+            'to_pos': to_pos,
+            'is_key_path': edge['is_key_path']
+        }
+
     duration_date = dict()
     for work in works_l:
         duration_date[work[0]] = [work[-2], work[-1]]
-    return position, duration_date, edge_info
+    return position, duration_date, edge_info, right_angle_edge_info

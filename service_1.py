@@ -46,8 +46,8 @@ async def receive_data(work_data: WorkData):
     print(predecessor_dict)
     key_path = get_key_path(work_l, adjacency_list)
     print(key_path)
-    
-    position, duration_date, edge_info = get_position(
+
+    position, duration_date, edge_info, right_angle_edge_info = get_position(
         key_path,
         predecessor_dict,
         adjacency_list,
@@ -57,6 +57,7 @@ async def receive_data(work_data: WorkData):
     ans['position'] = position
     ans['duration_date'] = duration_date
     ans['edge_info'] = edge_info
+    ans['right_angle_edge_info'] = right_angle_edge_info
 
     return ans
 
@@ -75,7 +76,7 @@ async def create_workflow_diagram():
         print(key_path)
         # key_path = ['D', 'F', 'G', 'I', 'J']
         # 调用 get_position 函数
-        position, duration_date, edge_info = get_position(
+        position, duration_date, edge_info, right_angle_edge_info = get_position(
             key_path,
             predecessor_dict,
             adjacency_list,
@@ -85,6 +86,8 @@ async def create_workflow_diagram():
         ans['position'] = position
         ans['duration_date'] = duration_date
         ans['edge_info'] = edge_info
+        ans['right_angle_edge_info'] = right_angle_edge_info # 它包含了直角边的信息。每个原始的斜边都被分解成两个边：一个垂直边和一个水平边。
+
 
         return ans
     # except Exception as e:
