@@ -10,7 +10,7 @@ from typing import Dict, List, Any
 import uvicorn
 from back_1 import get_all_pre, get_adjacency, get_key_path
 from Net_Position import get_position
-from excel_parse import get_worls
+from excel_parse import get_worls, get_work_from_json
 
 app = FastAPI()
 
@@ -21,6 +21,44 @@ class WorkflowDiagramRequest(BaseModel):
     predecessor_dict: Dict[str, List[str]]
     adjacency_list: Dict[str, List[str]]
     works: List[str]
+
+
+class WorkDataItem(BaseModel):
+    identifier: str
+    name: str
+    prerequisite: str
+    start_date: str
+    end_date: str
+
+
+class WorkData(BaseModel):
+    work_data: List[WorkDataItem]
+
+
+# 定义路径操作
+@app.post("/data")
+async def receive_data(work_data: WorkData):
+    print(work_data)
+    work_l = get_work_from_json(work_data.work_data)
+    adjacency_list = get_adjacency(work_l)
+    print(adjacency_list)
+    predecessor_dict = get_all_pre(work_l, adjacency_list)
+    print(predecessor_dict)
+    key_path = get_key_path(work_l, adjacency_list)
+    print(key_path)
+    
+    position, duration_date, edge_info = get_position(
+        key_path,
+        predecessor_dict,
+        adjacency_list,
+        work_l
+    )
+    ans = dict()
+    ans['position'] = position
+    ans['duration_date'] = duration_date
+    ans['edge_info'] = edge_info
+
+    return ans
 
 
 @app.post("/workflow-diagram")
