@@ -252,10 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     })
 
-    luckysheet.setCellFormat(4, 1, 'ct', {
-            fa: 'yyyy-MM-dd', // 日期格式
-            t: 'd' // 类型为日期
-        });
     luckysheet.setHorizontalFrozen(false)
     luckysheet.setcellvalue(3, 0, "123456");
 
@@ -455,16 +451,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function draw(){
     var allsheets = luckysheet.getAllSheets();
-    let jsonString = JSON.stringify(allsheets);
-    console.log(jsonString);
-
+    var sheetData = allsheets[0].data;
+    console.log(sheetData);
+    var data = [];
+    sheetData.forEach(function(row){
+        var rowData = {};
+        rowData["identifier"] = row[0]==null ? "" : row[0].m;
+        rowData["partition"] = row[1]==null ? "" : row[1].m;
+        rowData["classify"] = row[2]==null ? "" : row[2].m;
+        rowData["name"] = row[3]==null ? "" : row[3].m;
+        rowData["duration"] = row[4]==null ? "" : row[4].m;
+        rowData["prerequisite"] = row[5]==null ? "" : row[5].m;
+        rowData["start_date"] = row[6]==null ? "" : row[6].m;
+        rowData["end_date"] = row[7]==null ? "" : row[7].m;
+        rowData["cost"] = row[8]==null ? "" : row[8].m;
+        data.push(rowData);
+    });
+    console.log(data);
+    console.log(JSON.stringify(data))
     $.ajax({
-        url: '/workflow-diagram',
+        url: '/data',
         type: 'POST',
-        data: '',
+        data: data,
         cache: false,         //不设置缓存
         processData: false,  // 不处理数据
-        contentType: false,   // 不设置内容类型
+        contentType: "application/json",   // 不设置内容类型
         success: function(data) {
             console.log(data);
         },
