@@ -5,8 +5,8 @@
 # @File    : service_1.py
 # main.py
 from fastapi import FastAPI, HTTPException, Request, Form
-from pydantic import BaseModel
-from typing import Dict, List, Any
+from pydantic import BaseModel, Field
+from typing import Dict, List, Any, Optional, Union
 import uvicorn
 from back_1 import get_all_pre, get_adjacency, get_key_path
 from Net_Position import get_position
@@ -24,11 +24,18 @@ class WorkflowDiagramRequest(BaseModel):
 
 
 class WorkDataItem(BaseModel):
-    identifier: str
-    name: str
-    prerequisite: str
-    start_date: str
-    end_date: str
+    identifier: Optional[Union[str, int]]
+    partition: Optional[Union[str, int]]
+    classify: Optional[str]
+    name: Optional[str]
+    duration: Optional[Union[str, int]]
+    prerequisite: Optional[Union[str, int, None]]
+    start_date: Optional[Union[str, int, None]]
+    end_date: Optional[Union[str, int, None]]
+    cost: Optional[Union[str, int, None]] = None  # 设置默认值为 None
+
+    class Config:
+        extra = "allow"  # 允许额外的字段
 
 
 class WorkData(BaseModel):
@@ -39,6 +46,7 @@ class WorkData(BaseModel):
 @app.post("/data")
 async def receive_data(work_data: WorkData):
     print(work_data)
+    # return {"workdata": work_data}
     work_l = get_work_from_json(work_data.work_data)
     adjacency_list = get_adjacency(work_l)
     print(adjacency_list)
@@ -67,7 +75,7 @@ async def create_workflow_diagram():
     # try:
         file_path = "./data/1.xlsx"
         work_l = get_worls(file_path)
-
+        print(work_l)
         adjacency_list = get_adjacency(work_l)
         print(adjacency_list)
         predecessor_dict = get_all_pre(work_l, adjacency_list)
