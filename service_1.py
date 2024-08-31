@@ -10,7 +10,7 @@ from typing import Dict, List, Any
 import uvicorn
 from back_1 import get_all_pre, get_adjacency, get_key_path
 from Net_Position import get_position
-from excel_parse import get_worls
+from excel_parse import get_worls, get_work_from_json
 
 app = FastAPI()
 
@@ -21,6 +21,45 @@ class WorkflowDiagramRequest(BaseModel):
     predecessor_dict: Dict[str, List[str]]
     adjacency_list: Dict[str, List[str]]
     works: List[str]
+
+
+class WorkDataItem(BaseModel):
+    identifier: str
+    name: str
+    prerequisite: str
+    start_date: str
+    end_date: str
+
+
+class WorkData(BaseModel):
+    work_data: List[WorkDataItem]
+
+
+# 定义路径操作
+@app.post("/data")
+async def receive_data(work_data: WorkData):
+    print(work_data)
+    work_l = get_work_from_json(work_data.work_data)
+    adjacency_list = get_adjacency(work_l)
+    print(adjacency_list)
+    predecessor_dict = get_all_pre(work_l, adjacency_list)
+    print(predecessor_dict)
+    key_path = get_key_path(work_l, adjacency_list)
+    print(key_path)
+
+    position, duration_date, edge_info, right_angle_edge_info = get_position(
+        key_path,
+        predecessor_dict,
+        adjacency_list,
+        work_l
+    )
+    ans = dict()
+    ans['position'] = position
+    ans['duration_date'] = duration_date
+    ans['edge_info'] = edge_info
+    ans['right_angle_edge_info'] = right_angle_edge_info
+
+    return ans
 
 
 @app.post("/workflow-diagram")
@@ -37,7 +76,7 @@ async def create_workflow_diagram():
         print(key_path)
         # key_path = ['D', 'F', 'G', 'I', 'J']
         # 调用 get_position 函数
-        position, duration_date = get_position(
+        position, duration_date, edge_info, right_angle_edge_info = get_position(
             key_path,
             predecessor_dict,
             adjacency_list,
@@ -46,6 +85,10 @@ async def create_workflow_diagram():
         ans = dict()
         ans['position'] = position
         ans['duration_date'] = duration_date
+        ans['edge_info'] = edge_info
+        ans['right_angle_edge_info'] = right_angle_edge_info # 它包含了直角边的信息。每个原始的斜边都被分解成两个边：一个垂直边和一个水平边。
+
+
         return ans
     # except Exception as e:
     #     raise HTTPException(status_code=400, detail=str(e))

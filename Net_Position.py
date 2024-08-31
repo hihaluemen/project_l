@@ -5,7 +5,12 @@
 # @File    : Net_Position.py
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 
+# 设置中文字体
+font_path = 'data/simsun.ttc'  # 请替换为您系统中的中文字体路径
+font_prop = font_manager.FontProperties(fname=font_path)
+plt.rcParams['font.family'] = font_prop.get_name()
 
 # 检查并绘制前驱节点
 def ensure_predecessors_drawn(node, predecessor_dict, position):
@@ -93,15 +98,95 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
                     position[next_work] = (max_x, avg_y)
                 # sign *= -1
 
-    # 绘制图
+    # 绘制原始图
     plt.figure(figsize=(12, 8))
     nx.draw(G, pos=position, with_labels=True, node_size=2000, node_color="lightblue", font_size=10, font_weight="bold",
-            arrowsize=20)
-    plt.title("Workflow Diagram")
-    # plt.show()
-    plt.savefig('workflow_diagram.png', dpi=300, bbox_inches='tight')
+            arrowsize=20, font_family=font_prop.get_name())
+    plt.title("原始工作流程图", fontproperties=font_prop)
+    plt.savefig('原始工作流程图.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    # 创建一个字典来存储边的信息
+    edge_info = {}
+    for node, successors in adjacency_list.items():
+        for succ in successors:
+            edge_key = f"{node}->{succ}"  # 使用字符串作为键
+            edge_info[edge_key] = {
+                'from_node': node,
+                'to_node': succ,
+                'from_pos': list(position[node]),  # 转换为列表
+                'to_pos': list(position[succ]),  # 转换为列表
+                'is_key_path': node in key_path and succ in key_path and key_path.index(succ) == key_path.index(
+                    node) + 1
+            }
+
+    # 创建一个新的字典来存储直角边的信息和中间节点的位置
+    right_angle_edge_info = {}
+    mid_positions = {}
+    for edge_key, edge in edge_info.items():
+        from_pos = edge['from_pos']
+        to_pos = edge['to_pos']
+        
+        # 计算直角边的中间点
+        mid_x = from_pos[0]
+        mid_y = to_pos[1]
+        mid_node = f"{edge['from_node']}_{edge['to_node']}_mid"
+        mid_positions[mid_node] = [mid_x, mid_y]
+        
+        # 创建两个新的边：垂直边和水平边
+        vertical_key = f"{edge_key}_vertical"
+        horizontal_key = f"{edge_key}_horizontal"
+        
+        right_angle_edge_info[vertical_key] = {
+            'from_node': edge['from_node'],
+            'to_node': f"{edge['from_node']}_{edge['to_node']}_mid",
+            'from_pos': from_pos,
+            'to_pos': [mid_x, mid_y],
+            'is_key_path': edge['is_key_path']
+        }
+        
+        right_angle_edge_info[horizontal_key] = {
+            'from_node': f"{edge['from_node']}_{edge['to_node']}_mid",
+            'to_node': edge['to_node'],
+            'from_pos': [mid_x, mid_y],
+            'to_pos': to_pos,
+            'is_key_path': edge['is_key_path']
+        }
 
     duration_date = dict()
     for work in works_l:
         duration_date[work[0]] = [work[-2], work[-1]]
-    return position, duration_date
+
+    # 合并原始位置和中间节点位置
+    all_positions = {**position, **mid_positions}
+
+    # 绘制直角边图
+    plt.figure(figsize=(12, 8))
+    G_right_angle = nx.DiGraph()
+    
+    # 添加所有节点到图中
+    for node in all_positions:
+        G_right_angle.add_node(node)
+    
+    # 添加直角边
+    for edge in right_angle_edge_info.values():
+        G_right_angle.add_edge(edge['from_node'], edge['to_node'])
+    
+    # 绘制节点
+    nx.draw_networkx_nodes(G_right_angle, all_positions, node_size=2000, node_color="lightblue")
+    nx.draw_networkx_labels(G_right_angle, all_positions, font_size=10, font_weight="bold", font_family=font_prop.get_name())
+    
+    # 绘制直角边
+    for edge in right_angle_edge_info.values():
+        plt.arrow(edge['from_pos'][0], edge['from_pos'][1],
+                  edge['to_pos'][0] - edge['from_pos'][0],
+                  edge['to_pos'][1] - edge['from_pos'][1],
+                  shape='right', length_includes_head=True,
+                  head_width=0.15, head_length=0.3, color='red' if edge['is_key_path'] else 'black')
+    
+    plt.title("直角边工作流程图", fontproperties=font_prop)
+    plt.axis('off')
+    plt.savefig('直角边工作流程图.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    return position, duration_date, edge_info, right_angle_edge_info
