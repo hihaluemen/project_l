@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>双代号网络图</title>
+    <!-- jQuery -->
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- luckysheet -->
+    <script src="./static/js/jquery.event.drag-2.2.js"></script>
+    <script src="./static/js/jquery.event.drop-2.2.js"></script>
+    <link rel='stylesheet' href='./static/luckysheet/dist/plugins/css/pluginsCss.css' />
+    <link rel='stylesheet' href='./static/luckysheet/dist/plugins/plugins.css' />
+    <link rel='stylesheet' href='./static/luckysheet/dist/css/luckysheet.css' />
+    <link rel='stylesheet' href='./static/luckysheet/dist/assets/iconfont/iconfont.css' />
+    <script src="./static/luckysheet/dist/plugins/js/plugin.js"></script>
+    <script src="./static/luckysheet/dist/luckysheet.umd.js"></script>
+    <link href="./static/css/bootstrap.min.css" rel="stylesheet">
+    <!--flatpickr-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!--    storyjs-->
+    <script type="text/javascript" src="https://cdn.knightlab.com/libs/timeline/latest/js/storyjs-embed.js"></script>
+    <!--vis-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; /* 防止内容溢出 */
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width:100%;
+            height:100vh;
+            margin:0px;
+            padding:0px;
+            max-width: 100% !important;
+        }
+        .left, .right {
+            box-sizing: border-box;
+
+        }
+        .left {
+            margin:0px;
+            padding:0px;
+            width:100%;height:100%;
+            left: 0px;top: 0px;
+        }
+        .right {
+            width:100%;height:100%;
+        }
+        .btn-area {
+            background: #f2f3f7;
+            width:100%;
+            border-bottom: solid #eaeaed;
+        }
+        .btn-group{
+                padding: 10px 0 5px 10px;
+        }
+        .toggle-btn {
+            position: absolute; /* 绝对定位，相对于 #container 定位 */
+            left: 50%; /* 按钮位置居中 */
+            margin-left: -20px; /* 根据按钮宽度调整，使其居中 */
+            top: 50%; /* 垂直居中 */
+            transform: translate(-50%, -50%);
+            z-index: 10; /* 确保按钮在内容之上 */
+            width: 16px;
+            height: 38px;
+            background: #fff;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, .06);
+            opacity: 1;
+            border: 1px solid #eceef1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 8px 8px 8px 8px;
+
+        }
+        .toggle-btn img{
+            width:16px;
+            height: 16px;
+            margin-top: 2px;
+        }
+        .toggle-btn:hover{
+            background: #4152b5;
+        }
+        #toggleRight{
+            left: 52%; /* 垂直居中 */
+        }
+        #network{
+            margin: 60px;
+            border: 1px solid lightgray;
+            position: fixed;
+            width: 40%;
+            height: 100%;
+            animation: none;
+            transition: none;
+
+        }
+        #draw{
+            animation: none;
+            transition: none;
+        }
+    </style>
+</head>
+<body>
+    <script src="./static/js/cytoscape.min.js"></script>
+    <script src="./static/js/network.js"></script>
+    <div class="btn-area">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default">新建</button>
+            <button type="button" class="btn btn-default">保存</button>
+            <button type="button" class="btn btn-default" onclick="exportImg()">导出</button>
+            <button type="button" class="btn btn-default" onclick="draw()">绘制</button>
+<!--
+            <button type="button" class="btn btn-default" onclick="getData()">获取数据</button>
+-->
+        </div>
+    </div>
+
+        <div id="container"class="container">
+
+            <div class="left" id="luckysheet" ></div>
+            <div class="toggle-btn" id="toggleLeft"><img id="leftImg" src="./static/img/left_img.png" alt=""></div>
+            <div class="toggle-btn" id="toggleRight"><img id="rightImg" src="./static/img/right_img.png" alt=""></div>
+            <div class="right"  id="draw">
+                <div id="network" >
+                    <!-- <div id="box">
+                        <div id="ruler" ></div>
+                      </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function toggleElement(elementId, imgId, toggleButton, otherButton, showProperties, hideProperties) {
+        const element = document.getElementById(elementId);
+        const img = document.getElementById(imgId);
+
+        if (element.style.display === 'none') {
+            element.style.display = 'block';
+            img.src = showProperties.imgSrc;
+            $(toggleButton).css(showProperties.toggleButtonCss);
+            $(otherButton).css({
+                "display": "block"
+            });
+            $(".container").css(showProperties.containerCss);
+            $(showProperties.adjustElement).css(showProperties.adjustCss);
+        } else {
+            element.style.display = 'none';
+            img.src = hideProperties.imgSrc;
+            $(toggleButton).css(hideProperties.toggleButtonCss);
+            $(otherButton).css({
+                "display": "none"
+            });
+            $(".container").css(hideProperties.containerCss);
+            $(hideProperties.adjustElement).css(hideProperties.adjustCss);
+        }
+    }
+
+document.getElementById('toggleLeft').addEventListener('click', function() {
+    const element = document.getElementById("luckysheet");
+    toggleElement(
+        'luckysheet', 
+        'leftImg', 
+        '#toggleLeft', 
+        '#toggleRight', 
+        {
+            imgSrc: './static/img/left_img.png',
+            toggleButtonCss: {"left": "50%"},
+            containerCss: {"grid-template-columns": "1fr 1fr"},
+            adjustElement: "#graph",
+            adjustCss: {"width": "40%"}
+        }, 
+        {
+            imgSrc: './static/img/right_img.png',
+            toggleButtonCss: {"left": "2%"},
+            containerCss: {"grid-template-columns": "1fr"},
+            adjustElement: "#graph",
+            adjustCss: {"width": "94%"}
+        }
+    );
+    if (element.style.display === 'none') {
+        $("#network").css({"width": "90%"});
+    }else{
+        $("#network").css({"width": "40%"});
+    }
+});
+
+document.getElementById('toggleRight').addEventListener('click', function() {
+    const element = document.getElementById("draw");
+    toggleElement(
+        'draw', 
+        'rightImg', 
+        '#toggleRight', 
+        '#toggleLeft', 
+        {
+            imgSrc: './static/img/right_img.png',
+            toggleButtonCss: {"left": "52%"},
+            containerCss: {"grid-template-columns": "1fr 1fr"},
+            adjustElement: ".luckysheet",
+            adjustCss: {"width": "50%"}
+        }, 
+        {
+            imgSrc: './static/img/left_img.png',
+            toggleButtonCss: {"left": "100%"},
+            containerCss: {"grid-template-columns": "1fr"},
+            adjustElement: ".luckysheet",
+            adjustCss: {"width": "98%"}
+        }
+    );
+    if (element.style.display != 'none') {
+        $("#network").css({"width": "40%"});
+    }
+});
+    </script>
+</body>
+</html>
