@@ -88,6 +88,8 @@ def get_work_from_json(json_data: list) -> list:
     work_l = list()
     date_format = "%Y-%m-%d"
     for work in json_data:
+        # print('=='*8)
+        # print(work)
         if "null" in work or not work.identifier.isdigit():
             continue
         start_date_obj = datetime.strptime(work.start_date, date_format)

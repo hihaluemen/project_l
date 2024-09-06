@@ -32,7 +32,10 @@ def get_adjacency(work_l):
     for item in work_l:
         node = item[0]
         description = item[1]
-        predecessors = item[2].split('，') if item[2] else []
+        # 同时处理中文逗号和英文逗号
+        predecessors = item[2].replace('，', ',').split(',') if item[2] else []
+        predecessors = [pred.strip() for pred in predecessors if pred.strip()]  # 移除空白项
+        
         start_timestamp = item[3]
         end_timestamp = item[4]
 

@@ -30,6 +30,10 @@ def ensure_predecessors_drawn(node, predecessor_dict, position):
 
 
 def get_position(key_path, predecessor_dict, adjacency_list, works_l):
+    print("key_path： ", key_path)
+    print("predecessor_dict： ", predecessor_dict)
+    print("adjacency_list： ", adjacency_list)
+    print("works_l： ", works_l)
 
     position = {}  # 节点的绘制位置
 
@@ -58,7 +62,10 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
 
     # 为每个节点计算坐标
     for work in works:
-        ensure_predecessors_drawn(work, predecessor_dict, position)
+        # ensure_predecessors_drawn(work, predecessor_dict, position)
+        if work not in position:
+            ensure_predecessors_drawn(work, predecessor_dict, position)
+
         next_works = adjacency_list.get(work, [])
         if not next_works:
             continue
@@ -70,6 +77,10 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
                 continue
             if len(predecessor_dict[next_work]) == 1:
                 # 直接绘制在当前节点之后
+                print('999990000')
+                print(work)
+                print(position)
+                print(position[work])
                 position[next_work] = (position[work][0] + 1, position[work][1])
             else:
                 # 计算纵坐标，前驱的平均位置
