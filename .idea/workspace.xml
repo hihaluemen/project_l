@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="添加返回“斜边变成直角边”的信息">
+    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="调用接口更新">
+      <change afterPath="$PROJECT_DIR$/database/sql.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/excel_parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/excel_parse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/post_json.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/service_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/service_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/原始工作流程图.png" beforeDir="false" afterPath="$PROJECT_DIR$/原始工作流程图.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/直角边工作流程图.png" beforeDir="false" afterPath="$PROJECT_DIR$/直角边工作流程图.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +37,7 @@
     "Python.excel_parse.executor": "Run",
     "Python.post_json.executor": "Run",
     "Python.service_1.executor": "Run",
+    "Python.sql.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -47,7 +45,7 @@
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.post_json">
+  <component name="RunManager" selected="Python.sql">
     <configuration name="excel_parse" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="project_2" />
       <option name="ENV_FILES" value="" />
@@ -114,10 +112,33 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="sql" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="project_2" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/database" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/database/sql.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.post_json" />
+        <item itemvalue="Python.sql" />
         <item itemvalue="Python.service_1" />
+        <item itemvalue="Python.post_json" />
         <item itemvalue="Python.excel_parse" />
       </list>
     </recent_temporary>
@@ -186,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725045675918</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="调用接口更新">
+      <option name="closed" value="true" />
+      <created>1725080717132</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1725080717132</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -195,6 +224,7 @@
     <MESSAGE value="添加新的接口：json数据传递解析" />
     <MESSAGE value="添加requirement.txt" />
     <MESSAGE value="添加返回“斜边变成直角边”的信息" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加返回“斜边变成直角边”的信息" />
+    <MESSAGE value="调用接口更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="调用接口更新" />
   </component>
 </project>

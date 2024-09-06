@@ -96,7 +96,6 @@ async def create_workflow_diagram():
         ans['edge_info'] = edge_info
         ans['right_angle_edge_info'] = right_angle_edge_info # 它包含了直角边的信息。每个原始的斜边都被分解成两个边：一个垂直边和一个水平边。
 
-
         return ans
     # except Exception as e:
     #     raise HTTPException(status_code=400, detail=str(e))
