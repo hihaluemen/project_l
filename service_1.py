@@ -8,12 +8,15 @@ from fastapi import FastAPI, HTTPException, Request, Form
 from pydantic import BaseModel, Field
 from typing import Dict, List, Any, Optional, Union
 import uvicorn
+from starlette.staticfiles import StaticFiles
+
 from back_1 import get_all_pre, get_adjacency, get_key_path
 from Net_Position import get_position
+import templates
 from excel_parse import get_worls, get_work_from_json
 
 app = FastAPI()
-
+app.mount("/page", StaticFiles(directory="./templates", html=True), name="page")
 
 # 请求模型
 class WorkflowDiagramRequest(BaseModel):
@@ -100,6 +103,13 @@ async def create_workflow_diagram():
     # except Exception as e:
     #     raise HTTPException(status_code=400, detail=str(e))
 
+@app.get("/")
+async def login(request: Request):
+   return templates.TemplateResponse("templates/index.html", {"request": request})
+
+@app.get("/hello")
+async def root():
+    return {"message": "Hello World"}
 
 # 运行 Uvicorn 服务器
 if __name__ == "__main__":
