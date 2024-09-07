@@ -1,5 +1,5 @@
 import sql
-import datetime
+
 
 
 def insert_project_image(image_path, project_id):
