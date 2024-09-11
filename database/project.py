@@ -11,6 +11,7 @@ def insert_project(project_name):
     print("插入Project Image的结果为", insert_result)
     return insert_result
 
+
 if __name__ == '__main__':
     image_path = "test1"
     insert_project(image_path)
