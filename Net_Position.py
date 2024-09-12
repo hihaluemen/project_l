@@ -6,11 +6,13 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
+from datetime import datetime
 
 # 设置中文字体
 font_path = 'data/simsun.ttc'  # 请替换为您系统中的中文字体路径
 font_prop = font_manager.FontProperties(fname=font_path)
 plt.rcParams['font.family'] = font_prop.get_name()
+
 
 # 检查并绘制前驱节点
 def ensure_predecessors_drawn(node, predecessor_dict, position):
@@ -27,6 +29,27 @@ def ensure_predecessors_drawn(node, predecessor_dict, position):
                 position[pred] = (max_x, avg_y)
             else:
                 position[pred] = (0, initial_y)  # 默认初始位置
+
+
+def get_new_postion(postion, duration_date):
+    # 将所有日期转换为datetime对象
+    all_dates = [datetime.strptime(date, "%Y-%m-%d")
+                 for dates in duration_date.values()
+                 for date in dates]
+
+    # 找出最早的日期
+    earliest_date = min(all_dates)
+
+    new_postion = dict()
+    for work in postion:
+        time_s, time_e = duration_date[work]
+        d1 = datetime.strptime(time_s, "%Y-%m-%d")
+
+        # 计算工作开始日期与最早日期之间的差异
+        delta = (d1 - earliest_date).days
+
+        new_postion[work] = (delta, postion[work][1])
+    return new_postion
 
 
 def get_position(key_path, predecessor_dict, adjacency_list, works_l):
@@ -110,12 +133,12 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
                 # sign *= -1
 
     # 绘制原始图
-    plt.figure(figsize=(12, 8))
+    # plt.figure(figsize=(12, 8))
     nx.draw(G, pos=position, with_labels=True, node_size=2000, node_color="lightblue", font_size=10, font_weight="bold",
             arrowsize=20, font_family=font_prop.get_name())
-    plt.title("原始工作流程图", fontproperties=font_prop)
-    plt.savefig('原始工作流程图.png', dpi=300, bbox_inches='tight')
-    plt.close()
+    # plt.title("原始工作流程图", fontproperties=font_prop)
+    # plt.savefig('原始工作流程图.png', dpi=300, bbox_inches='tight')
+    # plt.close()
 
     # 创建一个字典来存储边的信息
     edge_info = {}
@@ -172,7 +195,7 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
     all_positions = {**position, **mid_positions}
 
     # 绘制直角边图
-    plt.figure(figsize=(12, 8))
+    # plt.figure(figsize=(12, 8))
     G_right_angle = nx.DiGraph()
     
     # 添加所有节点到图中
@@ -188,16 +211,21 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
     nx.draw_networkx_labels(G_right_angle, all_positions, font_size=10, font_weight="bold", font_family=font_prop.get_name())
     
     # 绘制直角边
-    for edge in right_angle_edge_info.values():
-        plt.arrow(edge['from_pos'][0], edge['from_pos'][1],
-                  edge['to_pos'][0] - edge['from_pos'][0],
-                  edge['to_pos'][1] - edge['from_pos'][1],
-                  shape='right', length_includes_head=True,
-                  head_width=0.15, head_length=0.3, color='red' if edge['is_key_path'] else 'black')
+    # for edge in right_angle_edge_info.values():
+    #     plt.arrow(edge['from_pos'][0], edge['from_pos'][1],
+    #               edge['to_pos'][0] - edge['from_pos'][0],
+    #               edge['to_pos'][1] - edge['from_pos'][1],
+    #               shape='right', length_includes_head=True,
+    #               head_width=0.15, head_length=0.3, color='red' if edge['is_key_path'] else 'black')
     
-    plt.title("直角边工作流程图", fontproperties=font_prop)
-    plt.axis('off')
-    plt.savefig('直角边工作流程图.png', dpi=300, bbox_inches='tight')
-    plt.close()
+    # plt.title("直角边工作流程图", fontproperties=font_prop)
+    # plt.axis('off')
+    # plt.savefig('直角边工作流程图.png', dpi=300, bbox_inches='tight')
+    # plt.close()
 
-    return position, duration_date, edge_info, right_angle_edge_info
+    # print(position)
+    # print(duration_date)
+    new_position = get_new_postion(position, duration_date)
+    print(new_position)
+
+    return position, duration_date, edge_info, right_angle_edge_info, new_position

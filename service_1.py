@@ -15,6 +15,8 @@ from Net_Position import get_position
 import templates
 from excel_parse import get_worls, get_work_from_json
 
+
+
 app = FastAPI()
 app.mount("/page", StaticFiles(directory="./templates", html=True), name="page")
 
@@ -58,7 +60,7 @@ async def receive_data(work_data: WorkData):
     key_path = get_key_path(work_l, adjacency_list)
     print(key_path)
 
-    position, duration_date, edge_info, right_angle_edge_info = get_position(
+    position, duration_date, edge_info, right_angle_edge_info, new_position = get_position(
         key_path,
         predecessor_dict,
         adjacency_list,
@@ -69,6 +71,7 @@ async def receive_data(work_data: WorkData):
     ans['duration_date'] = duration_date
     ans['edge_info'] = edge_info
     ans['right_angle_edge_info'] = right_angle_edge_info
+    ans['new_position'] = new_position
 
     return ans
 
@@ -87,7 +90,7 @@ async def create_workflow_diagram():
         print(key_path)
         # key_path = ['D', 'F', 'G', 'I', 'J']
         # 调用 get_position 函数
-        position, duration_date, edge_info, right_angle_edge_info = get_position(
+        position, duration_date, edge_info, right_angle_edge_info, new_position = get_position(
             key_path,
             predecessor_dict,
             adjacency_list,
@@ -98,6 +101,7 @@ async def create_workflow_diagram():
         ans['duration_date'] = duration_date
         ans['edge_info'] = edge_info
         ans['right_angle_edge_info'] = right_angle_edge_info # 它包含了直角边的信息。每个原始的斜边都被分解成两个边：一个垂直边和一个水平边。
+        ans['new_position'] = new_position
 
         return ans
     # except Exception as e:

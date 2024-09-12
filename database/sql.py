@@ -1,8 +1,8 @@
 import pymysql
 from dbutils.pooled_db import PooledDB
 
-mysql_config = {"host": "localhost", "user": "maxiaosong",
-                "password": "123456", "database": "manager_system"}
+mysql_config = {"host": "localhost", "user": "root",
+                "password": "bluemen", "database": "manager_system"}
 
 class MysqlConn(object):
     """这是一个mysql整合类"""
@@ -89,5 +89,3 @@ def sql_search(sql_str: str) -> int:
     result = mysql_cli.list_data(sql_str)
     print(f"一共查询到 {len(result)} 个结果")
     return result
-
-result =  sql_search("select * from user")
