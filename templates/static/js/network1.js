@@ -203,9 +203,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var cy = cytoscape({
         container: document.getElementById('network'),
          elements: [
-             // { data: { id: 'a' },position: { x: 100, y: 100 } },
-             // { data: { id: 'b' },position: { x: 200, y: 100 }},
-             // { data: { id: 'ab', source: 'a', target: 'b' } }
+             // { data: { id: '1' },position: { x: 100, y: 200 } },
+             // { data: { id: '2' },position: { x: 200, y: 100 }},
+             // { data: { id: '3' },position: { x: 200, y: 300 }},
+             // { data: { id: '4' },position: { x: 400, y: 200 }},
+             // { data: { id: '5' },position: { x: 500, y: 200 }},
+             // { data: { id: '12', source: '1', target: '2',label : '1-2' },group: 'edges' },
+             // { data: { id: '13', source: '1', target: '3',label : '1-3' },group: 'edges' },
+             // { data: { id: '24', source: '2', target: '4',label : '2-4' },group: 'edges' },
+             // { data: { id: '34', source: '3', target: '4',label : '3-4',linestyle: 'dashed'},group: 'edges' },
+             // { data: { id: '45', source: '4', target: '5',label : '4-5',linestyle: 'dashed' },group: 'edges' }
+
+
             ],
 
 
@@ -227,6 +236,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 selector: 'edge',
                 style: {
                     'label': 'data(label)',
+                    'text-margin-y': -10,
+                    'text-margin-x': -15,
                     'z-index': 1, // 确保文本在边的上方
                     'width': 2,
                     'line-color': 'black',
@@ -247,11 +258,9 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 selector: 'edge[linestyle = "freeline"]',
                 style: {
-                    'curve-style': 'taxi',
-                    'segment-distances': '0, 5, -5, 5, -5, 5, 0', // 控制每一段折线的长度和方向
-                    'segment-weights': '0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1' ,  // 控制每一段折线的转折点位置
-                    // 'segment-distances': '0,0, 5, -5, 5, -5, 0, 100', // 控制每一段折线的长度和方向
-                    // 'segment-weights': '1,0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 1' ,  // 控制每一段折线的转折点位置
+                    'curve-style': 'segments',
+                    'segment-distances': '0, 5, -5, 5, -5, 0', // 控制每一段折线的长度和方向
+                    'segment-weights': '0.65, 0.7, 0.75, 0.8, 0.85, 0.9' ,  // 控制每一段折线的转折点位置
                     'width': 2,
                     'line-color': 'black',
                 }
@@ -260,6 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 selector: 'edge[is_key_path = "true"]',
                 style: {
                     'line-color': 'red',
+                    'target-arrow-color': 'red',
                 }
             }
         ],
@@ -270,41 +280,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     $("#network canvas").attr("id","canvas");
     // 限制缩放范围
-    cy.minZoom(2); // 最小缩放比例为 1
+    cy.minZoom(1); // 最小缩放比例为 1
     cy.maxZoom(2); // 最大缩放比例为 2
     //
-    // // 限制移动范围
-    // cy.on('pan', function (evt) {
-    //   var panX = cy.pan().x;
-    //   var panY = cy.pan().y;
-    //
-    //   if (panX > 0) {
-    //     cy.panBy({ x: -panX, y: 0 });
-    //   }
-    //   if (panY > 0) {
-    //     cy.panBy({ x: 0, y: -panY });
-    //   }
-    // });
-    // 监听 drawEdge 事件
-    // cy.on('drawedge', function(e) {
-    //     var edge = e.target;
-    //     var ctx = e.cy.renderer().getContext('edge');
-    //     var sourcePos = edge.source().position();
-    //     var targetPos = edge.target().position();
-    //
-    //     // 计算直线和波浪线的绘制逻辑
-    //     ctx.beginPath();
-    //     ctx.moveTo(sourcePos.x, sourcePos.y);
-    //     // 绘制直线部分
-    //     ctx.lineTo((sourcePos.x + targetPos.x) / 2, (sourcePos.y + targetPos.y) / 2);
-    //     // 绘制波浪线部分
-    //     ctx.bezierCurveTo(
-    //     targetPos.x - 50, targetPos.y - 50,
-    //     targetPos.x + 50, targetPos.y + 50,
-    //     targetPos.x, targetPos.y
-    //     );
-    //     ctx.stroke();
-    // });
+
 
     // 将实例存储在全局变量
     // window.myCytoscapeInstance = cy;
@@ -599,7 +578,7 @@ function drawSquares(numSquares, startDate) {
 }
 
 
-function exportImg() {
+/*function exportImg() {
     // var networkCanvas = document.getElementById('canvas');
     // networkCanvas.toBlob(function(blob) {
     //    var a = document.createElement("a");
@@ -630,5 +609,39 @@ function exportImg() {
     document.body.removeChild(a);
 
 
+}*/
+
+function exportImg() {
+    // 获取两个 canvas 元素
+    const canvas1 = document.querySelector('canvas[data-id="layer0-selectbox"]');
+    const canvas2 = document.querySelector('canvas[data-id="layer2-node"]');
+
+    // 创建一个新的 canvas 元素
+    const combinedCanvas = document.createElement('canvas');
+    const ctx = combinedCanvas.getContext('2d');
+
+    // 设置新 canvas 的宽高为最大宽高
+    combinedCanvas.width = Math.max(canvas1.width, canvas2.width);
+    combinedCanvas.height = Math.max(canvas1.height, canvas2.height);
+
+    // 清除新 canvas 的内容
+    ctx.clearRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
+    // 绘制第一个 canvas 的内容
+    ctx.drawImage(canvas1, 0, 0);
+
+    // 绘制第二个 canvas 的内容
+    // 如果第二个 canvas 的尺寸与第一个 canvas 不同，可以调整绘制的位置
+    ctx.drawImage(canvas2, 0, 0);
+
+    // 将新 canvas 转为 Blob
+    combinedCanvas.toBlob(function(blob) {
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.download = "combined-canvas.png";
+        a.href = window.URL.createObjectURL(blob);
+        a.click();
+        document.body.removeChild(a);
+    });
 }
 
