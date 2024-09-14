@@ -203,7 +203,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var cy = cytoscape({
         container: document.getElementById('network'),
          elements: [
+             // { data: { id: 'a' },position: { x: 100, y: 100 } },
+             // { data: { id: 'b' },position: { x: 200, y: 100 }},
+             // { data: { id: 'ab', source: 'a', target: 'b' } }
             ],
+
 
         style: [
             {
@@ -243,9 +247,11 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 selector: 'edge[linestyle = "freeline"]',
                 style: {
-                    'curve-style': 'segments',
-                    'segment-distances': '0, 5, -5, 5, -5, 0', // 控制每一段折线的长度和方向
-                    'segment-weights': '0.65, 0.7, 0.75, 0.8, 0.85, 0.9' ,  // 控制每一段折线的转折点位置
+                    'curve-style': 'taxi',
+                    'segment-distances': '0, 5, -5, 5, -5, 5, 0', // 控制每一段折线的长度和方向
+                    'segment-weights': '0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1' ,  // 控制每一段折线的转折点位置
+                    // 'segment-distances': '0,0, 5, -5, 5, -5, 0, 100', // 控制每一段折线的长度和方向
+                    // 'segment-weights': '1,0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 1' ,  // 控制每一段折线的转折点位置
                     'width': 2,
                     'line-color': 'black',
                 }
@@ -264,40 +270,99 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     $("#network canvas").attr("id","canvas");
     // 限制缩放范围
-    cy.minZoom(1); // 最小缩放比例为 1
-    cy.maxZoom(1); // 最大缩放比例为 2
-
-    // 限制移动范围
-    cy.on('pan', function (evt) {
-      var panX = cy.pan().x;
-      var panY = cy.pan().y;
-
-      if (panX > 0) {
-        cy.panBy({ x: -panX, y: 0 });
-      }
-      if (panY > 0) {
-        cy.panBy({ x: 0, y: -panY });
-      }
-    });
+    cy.minZoom(2); // 最小缩放比例为 1
+    cy.maxZoom(2); // 最大缩放比例为 2
+    //
+    // // 限制移动范围
+    // cy.on('pan', function (evt) {
+    //   var panX = cy.pan().x;
+    //   var panY = cy.pan().y;
+    //
+    //   if (panX > 0) {
+    //     cy.panBy({ x: -panX, y: 0 });
+    //   }
+    //   if (panY > 0) {
+    //     cy.panBy({ x: 0, y: -panY });
+    //   }
+    // });
+    // 监听 drawEdge 事件
+    // cy.on('drawedge', function(e) {
+    //     var edge = e.target;
+    //     var ctx = e.cy.renderer().getContext('edge');
+    //     var sourcePos = edge.source().position();
+    //     var targetPos = edge.target().position();
+    //
+    //     // 计算直线和波浪线的绘制逻辑
+    //     ctx.beginPath();
+    //     ctx.moveTo(sourcePos.x, sourcePos.y);
+    //     // 绘制直线部分
+    //     ctx.lineTo((sourcePos.x + targetPos.x) / 2, (sourcePos.y + targetPos.y) / 2);
+    //     // 绘制波浪线部分
+    //     ctx.bezierCurveTo(
+    //     targetPos.x - 50, targetPos.y - 50,
+    //     targetPos.x + 50, targetPos.y + 50,
+    //     targetPos.x, targetPos.y
+    //     );
+    //     ctx.stroke();
+    // });
 
     // 将实例存储在全局变量
-    window.myCytoscapeInstance = cy;
+    // window.myCytoscapeInstance = cy;
+    window.myCytoscapeInstances = {
+        cy: cy,
+        numSquares:null,
+        startDate: null,
+    };
 
-    var today = new Date();
-    var currentDay = today.getDate();
-    drawSquares(80,currentDay);
+    cy.on('render', function () {
+        // cy.edges().forEach(function(edge) {
+          //   const sourcePos = edge.source().position();
+          //   const targetPos = edge.target().position();
+          //   const distance = Math.hypot(targetPos.x - sourcePos.x, targetPos.y - sourcePos.y);
+          //   const amplitude = 10; // 波浪振幅
+          //   const waveLength = 50; // 波浪长度
+          //
+          //   // 计算波浪线的控制点
+          //   const controlPoints = [
+          //     {
+          //       x: sourcePos.x + (targetPos.x - sourcePos.x) / 3,
+          //       y: sourcePos.y + amplitude * Math.sin((2 * Math.PI * distance) / waveLength)
+          //     },
+          //     {
+          //       x: targetPos.x - (targetPos.x - sourcePos.x) / 3,
+          //       y: targetPos.y + amplitude * Math.sin((2 * Math.PI * distance) / waveLength)
+          //     }
+          //   ];
+          //
+          //   // 更新边的样式
+          //   edge.css({
+          //     'control-point-1': `(${controlPoints[0].x},${controlPoints[0].y})`,
+          //     'control-point-2': `(${controlPoints[1].x},${controlPoints[1].y})`,
+          //   });
+          // });
+
+        var instance = window.myCytoscapeInstances;
+        var numSquares = instance.numSquares;
+        var startDate = instance.startDate;
+        if(numSquares == null){
+            numSquares = 80;
+        }
+        if(startDate == null){
+            startDate = new Date();
+        }
+        drawSquares(numSquares,startDate);
+    });
+
 
 });
 
 function draw(){
     var allsheets = luckysheet.getAllSheets();
     var sheetData = allsheets[0].data;
-    // console.log(sheetData);
     var data = [];
     for (let i = 1; i < sheetData.length; i++) {
         var row = sheetData[i];
         if(areAllElementsEmpty(row, row.length)){
-            console.log("empty row")
             break;
         }
 
@@ -316,7 +381,6 @@ function draw(){
     var paydata = {
         "work_data":data
     }
-    // console.log(paydata);
     console.log(JSON.stringify(paydata))
     $.ajax({
         url: '/data',
@@ -327,7 +391,7 @@ function draw(){
         contentType: "application/json",   // 不设置内容类型
         success: function(data) {
             console.log(data);
-            var position = data.position;
+            var position = data.new_position;
             var duration_date = data.duration_date;
             //时间
             var durationkeys = Object.keys(duration_date)
@@ -341,6 +405,8 @@ function draw(){
             var startDate = new Date(date); // 例如，从 2023 年 12 月 1 日开始
             // 调用 drawSquares 函数绘制方块
             drawSquares(numSquares, startDate);
+            window.myCytoscapeInstances.numSquares = numSquares;
+            window.myCytoscapeInstances.startDate = startDate;
 
             //网络图
             var info = {
@@ -353,21 +419,29 @@ function draw(){
             for (const edgeKey in edge_info) {
                 if (edge_info.hasOwnProperty(edgeKey)) {
                     const edgeValue = edge_info[edgeKey];
-                    console.log(edgeValue["is_key_path"]);
+                    var from_node = edgeValue["from_node"];
+                    var to_node = edgeValue["to_node"];
+                    var from_date = duration_date[from_node][1];
+                    var to_date = duration_date[to_node][0];
+                    var linestyle = null;
+                    if(calcuDays(from_date,to_date)>1){
+                        linestyle = "freeline";
+                    }
                     new_edges.push({
                         data:{
-                            id: edgeKey, source: edgeValue["from_node"], target: edgeValue["to_node"], label: edgeKey,
-                            linestyle: edgeValue["dashes"]|edgeValue["zigzag"], is_key_path: edgeValue["is_key_path"]+""
+                            id: edgeKey, source: from_node, target: to_node, label: edgeKey,
+                            linestyle: linestyle, is_key_path: edgeValue["is_key_path"]+""
                         }, group: 'edges'
                     });
                 }
             }
 
-            console.log(new_edges)
             var convertedInfo = convertData(info);
             var elementsData = convertedInfo.concat(new_edges);
-            console.log(elementsData);
-            var cy = window.myCytoscapeInstance;
+            var instance = window.myCytoscapeInstances;
+            var cy = instance.cy;
+            // 清除 cy 中的所有节点和边
+            cy.remove('*');
             cy.add(elementsData);
 
         },
@@ -388,8 +462,8 @@ function convertData(info) {
             convertedData.push({
                 data: { id: key },
                 position: {
-                    x: info.position[key][0]*100+50,
-                    y: info.position[key][1]*100+150
+                    x: info.position[key][0]*20+10,
+                    y: info.position[key][1]*100+200
                 }
             });
         }
@@ -416,6 +490,21 @@ function calculateDaysBetweenDates(dateString1, dateString2) {
 
   return daysDifference;
 }
+//计算两个日期之间的天数差(不取绝对值)
+function calcuDays(dateString1, dateString2) {
+  // 将日期字符串转换为 Date 对象
+  const date1 = new Date(dateString1);
+  const date2 = new Date(dateString2);
+
+  // 计算两个日期之间的差异（毫秒）
+  const timeDifference = date2.getTime() - date1.getTime();
+
+  // 将差异转换为天数
+  const daysDifference = timeDifference / (1000 * 3600 * 24);
+
+  // 返回相差的天数，不取绝对值
+  return daysDifference;
+}
 
 // 定义一个函数来绘制方块
 function drawSquares(numSquares, startDate) {
@@ -423,6 +512,7 @@ function drawSquares(numSquares, startDate) {
     var canvas = document.getElementById("canvas");
     // 获取 2D 绘图上下文
     var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 设置方块大小
     var squareSize = 20;
@@ -431,12 +521,12 @@ function drawSquares(numSquares, startDate) {
 
 
     // 获取当前日期
-    var today = new Date(startDate);
-    var currentDay = today.getDate();
-    var currentMonth = today.getMonth();
+    // var today = new Date(startDate);
+    var currentDay = startDate.getDate();
+    var currentMonth = startDate.getMonth();
     var day = currentDay;
     // 获取年份
-    var year = today.getFullYear();
+    var year = startDate.getFullYear();
     var monthX = 0;
     var yearX = 0;
     // 循环绘制方块和文本
@@ -445,16 +535,16 @@ function drawSquares(numSquares, startDate) {
         var x = i * (squareSize + spacing);
 
         // 如果日期超过了当月天数，则进入下一月
-        var days = new Date(today.getFullYear(), currentMonth + 1, 0).getDate();
+        var days = new Date(startDate.getFullYear(), currentMonth + 1, 0).getDate();
         if (day > days) {
             day = 1;
             // 绘制月份
             // 绘制方块框线
 
             ctx.strokeRect(monthX, 20, x-monthX, squareSize);
-            var monthText = new Date(today.getFullYear(), currentMonth, 1).toLocaleString('default', { month: 'long' });
+            var monthText = new Date(startDate.getFullYear(), currentMonth, 1).toLocaleString('default', { month: 'long' });
             var monthTextWidth = ctx.measureText(monthText).width;
-            ctx.fillText(monthText, monthX + (x - monthTextWidth) / 2, 20 + (squareSize + 12) / 2);
+            ctx.fillText(monthText, monthX + (x - monthX - monthTextWidth) / 2, 20 + (squareSize + 12) / 2);
             monthX = x;
             currentMonth++;
             // 更新年份
@@ -496,17 +586,49 @@ function drawSquares(numSquares, startDate) {
         ctx.fillText(text, textX, textY);
 
     }
+    // 绘制最后一月的方块框线
+    ctx.strokeRect(monthX, 20, x-monthX+squareSize, squareSize);
+    var monthText = new Date(startDate.getFullYear(), currentMonth, 1).toLocaleString('default', { month: 'long' });
+    var monthTextWidth = ctx.measureText(monthText).width;
+    ctx.fillText(monthText, monthX + (x - monthX - monthTextWidth) / 2, 20 + (squareSize + 12) / 2);
+    // 绘制最后一年的方块框线
+    ctx.strokeRect(yearX, 0, x-yearX+squareSize, squareSize);
+    var yearTextWidth = ctx.measureText(year).width;
+    ctx.fillText(year, yearX + (x - yearX - yearTextWidth) / 2, 12);
+
 }
 
 
 function exportImg() {
-    var networkCanvas = document.getElementById('canvas');
-    networkCanvas.toBlob(function(blob) {
-       var a = document.createElement("a");
-       document.body.appendChild(a);
-       a.download = "network" + ".png";
-       a.href = window.URL.createObjectURL(blob);
-       a.click();
+    // var networkCanvas = document.getElementById('canvas');
+    // networkCanvas.toBlob(function(blob) {
+    //    var a = document.createElement("a");
+    //    document.body.appendChild(a);
+    //    a.download = "network" + ".png";
+    //    a.href = window.URL.createObjectURL(blob);
+    //    a.click();
+    // });
+    var instance = window.myCytoscapeInstances;
+    var cy = instance.cy;
+    // 导出整个画布为 PNG 图片
+    // const png64 = cy.png({
+    //     full: true, // 设置为 true 以导出整个画布
+    //     scale: 1, // 设置缩放比例，默认为 1
+    //     output: 'blob' // 设置输出格式为 base64 编码字符串
+    // });
+    const png64 = cy.jpg({
+        full: true, // 设置为 true 以导出整个画布
+        scale: 1, // 设置缩放比例，默认为 1
+        output: 'blob' // 设置输出格式为 base64 编码字符串
     });
+    var name = "network" + ".jpg";;
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.download = name;
+    a.href = window.URL.createObjectURL(png64);
+    a.click();
+    document.body.removeChild(a);
+
 
 }
+
