@@ -36,10 +36,10 @@ CREATE TABLE `project_image` (
 #user_project table
 ```sql
 CREATE TABLE `user_project` (
-  `user_project_id` int NOT NULL AUTO_INCREMENT COMMENT '用户项目映射表ID,主键',
+  `userproject_id` int NOT NULL AUTO_INCREMENT COMMENT '用户项目映射表ID,主键',
   `project_id` int NOT NULL COMMENT '项目ID，外键，与项目表关联',
   `user_id` int NOT NULL COMMENT '用户ID，外键，关联User表',
-  PRIMARY KEY (`userProject_id`),
+  PRIMARY KEY (`userproject_id`),
   KEY `userproject_fk_1` (`project_id`),
   KEY `userproject_fk_2` (`user_id`),
   CONSTRAINT `userproject_fk_1` FOREIGN KEY (`project_id`) REFERENCES `project` (`project_id`),
