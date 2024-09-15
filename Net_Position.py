@@ -163,9 +163,17 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
         from_pos = edge['from_pos']
         to_pos = edge['to_pos']
         
-        # 计算直角边的中间点
-        mid_x = from_pos[0]
-        mid_y = to_pos[1]
+        # 检查是否存在直接连接的边
+        direct_edge_exists = any(e['from_pos'] == from_pos and e['to_pos'] == to_pos for e in edge_info.values())
+        
+        # 根据是否存在直接连接的边来决定中间点的位置
+        if direct_edge_exists:
+            mid_x = to_pos[0]
+            mid_y = from_pos[1]
+        else:
+            mid_x = from_pos[0]
+            mid_y = to_pos[1]
+        
         mid_node = f"{edge['from_node']}_{edge['to_node']}_mid"
         mid_positions[mid_node] = [mid_x, mid_y]
         
@@ -175,7 +183,7 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
         
         right_angle_edge_info[vertical_key] = {
             'from_node': edge['from_node'],
-            'to_node': f"{edge['from_node']}_{edge['to_node']}_mid",
+            'to_node': mid_node,
             'from_pos': from_pos,
             'to_pos': [mid_x, mid_y],
             'is_key_path': edge['is_key_path'],
@@ -183,7 +191,7 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
         }
         
         right_angle_edge_info[horizontal_key] = {
-            'from_node': f"{edge['from_node']}_{edge['to_node']}_mid",
+            'from_node': mid_node,
             'to_node': edge['to_node'],
             'from_pos': [mid_x, mid_y],
             'to_pos': to_pos,

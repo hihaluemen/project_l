@@ -53,6 +53,7 @@ async def receive_data(work_data: WorkData):
     print(work_data)
     # return {"workdata": work_data}
     work_l = get_work_from_json(work_data.work_data)
+    print(work_l)
     adjacency_list = get_adjacency(work_l)
     print(adjacency_list)
     predecessor_dict = get_all_pre(work_l, adjacency_list)
