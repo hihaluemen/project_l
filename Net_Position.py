@@ -145,13 +145,15 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
     for node, successors in adjacency_list.items():
         for succ in successors:
             edge_key = f"{node}->{succ}"  # 使用字符串作为键
+            is_virtual = is_virtual_work(node, succ, works_l, predecessor_dict)
             edge_info[edge_key] = {
                 'from_node': node,
                 'to_node': succ,
                 'from_pos': list(position[node]),  # 转换为列表
                 'to_pos': list(position[succ]),  # 转换为列表
                 'is_key_path': node in key_path and succ in key_path and key_path.index(succ) == key_path.index(
-                    node) + 1
+                    node) + 1,
+                'is_virtual': is_virtual
             }
 
     # 创建一个新的字典来存储直角边的信息和中间节点的位置
@@ -176,7 +178,8 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
             'to_node': f"{edge['from_node']}_{edge['to_node']}_mid",
             'from_pos': from_pos,
             'to_pos': [mid_x, mid_y],
-            'is_key_path': edge['is_key_path']
+            'is_key_path': edge['is_key_path'],
+            'is_virtual': edge['is_virtual']
         }
         
         right_angle_edge_info[horizontal_key] = {
@@ -184,7 +187,8 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
             'to_node': edge['to_node'],
             'from_pos': [mid_x, mid_y],
             'to_pos': to_pos,
-            'is_key_path': edge['is_key_path']
+            'is_key_path': edge['is_key_path'],
+            'is_virtual': edge['is_virtual']
         }
 
     duration_date = dict()
@@ -229,3 +233,18 @@ def get_position(key_path, predecessor_dict, adjacency_list, works_l):
     print(new_position)
 
     return position, duration_date, edge_info, right_angle_edge_info, new_position
+
+def is_virtual_work(from_node, to_node, works_l, predecessor_dict):
+    # 检查是否存在从from_node到to_node的实际工作
+    actual_work_exists = any(work[0] == from_node and work[1] == to_node for work in works_l)
+    
+    # 检查是否满足虚工作的条件
+    if not actual_work_exists:
+        # 检查to_node是否有多个前驱节点
+        if len(predecessor_dict[to_node]) > 1:
+            # 检查from_node是否是to_node的必要前驱节点
+            other_predecessors = [pred for pred in predecessor_dict[to_node] if pred != from_node]
+            if any(from_node in predecessor_dict[pred] for pred in other_predecessors):
+                return True
+    
+    return False
