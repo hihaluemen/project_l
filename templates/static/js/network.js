@@ -4,6 +4,8 @@ var nodes = new vis.DataSet();
 var edges = new vis.DataSet();
 
 var network = null;
+// 设置方块大小
+var squareSize = 10;
 
 document.addEventListener('DOMContentLoaded', function() {
     //表格部分
@@ -225,9 +227,12 @@ document.addEventListener('DOMContentLoaded', function() {
                           // 添加到文档中
                           document.body.appendChild(inputElement);
                           // 初始化 Flatpickr 时间选择器
+                          var cellValue = luckysheet.getCellValue(rowIdx, columnIndex);
                           flatpickr(inputElement, {
                               enableTime: false, // 启用时间选择
                               dateFormat: 'Y-m-d', // 设置时间格式，
+                              locale: "zh", // 设置中文
+                              defaultDate: cellValue, // 设置默认日期
 
                               // 当用户选择时间后，更新单元格的值
                               onChange: function(selectedDates, dateStr) {
@@ -265,33 +270,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初网络图部分
      // 创建节点
     nodes = new vis.DataSet([
-        {id: 1, label: '1', x: 0, y: 200},
-        {id: 2, label: '2', x: 200, y: 200},
-        {id: 3, label: '3', x: 200, y: 300},
-        {id: 4, label: '4', x: 400, y: 200},
-        {id: 5, label: '5', x: 600, y: 200},
-        {id: 6, label: '6', x: 800, y: 200},
-        {id: 7, label: '7', x: 200, y: 100},
-        {id: 8, label: '8', x: 800, y: 100},
-        {id: 9, label: '9', x: 800, y: 300},
-        {id: 10, label: '10', x: 900, y: 200},
+        // {id: 1, label: '1', x: 0, y: 200},
+        // {id: 2, label: '2', x: 200, y: 200},
+        // {id: 3, label: '3', x: 200, y: 300},
+        // {id: 4, label: '4', x: 400, y: 200},
+        // {id: 5, label: '5', x: 600, y: 200},
+        // {id: 6, label: '6', x: 800, y: 200},
+        // {id: 7, label: '7', x: 200, y: 100},
+        // {id: 8, label: '8', x: 800, y: 100},
+        // {id: 9, label: '9', x: 800, y: 300},
+        // {id: 10, label: '10', x: 900, y: 200},
     ]);
 
     // 创建边
     edges = new vis.DataSet([
-        {id: 'e1-2', from: 1, to: 2, label: 'A(15)', arrows: 'to', dashes: true},
-        {id: 'e1-3', from: 1, to: 3, label: 'B(20)', arrows: 'to', dashes: true, hidden: true},
-        {id: 'e2-4', from: 2, to: 4, label: 'C(10)', arrows: 'to'},
-        {id: 'e3-4', from: 3, to: 4, label: 'C(10)', arrows: 'to', hidden: true,},
-        {id: 'e4-5', from: 4, to: 5, label: 'D(15)', arrows: 'to', zigzag: true, hidden: true},
-        {id: 'e5-6', from: 5, to: 6, label: 'E(10)', arrows: 'to'},
-        {id: 'e1-7', from: 1, to: 7, label: 'F(15)', arrows: 'to', hidden: true},
-        {id: 'e7-4', from: 7, to: 4, label: 'F(15)', arrows: 'to', hidden: true},
-        {id: 'e5-8', from: 5, to: 8, label: 'G(15)', arrows: 'to', hidden: true},
-        {id: 'e5-9', from: 5, to: 9, label: 'H(15)', arrows: 'to', zigzag: true,hidden: true},
-        {id: 'e6-10', from: 6, to: 10, label: 'I(15)', arrows: 'to'},
-        {id: 'e8-10', from: 8, to: 10, label: 'I(15)', arrows: 'to', hidden: true},
-        {id: 'e9-10', from: 9, to: 10, label: 'I(15)', arrows: 'to', zigzag: true,hidden: true},
+        // {id: 'e1-2', from: 1, to: 2, label: 'A(15)', arrows: 'to', dashes: true},
+        // {id: 'e1-3', from: 1, to: 3, label: 'B(20)', arrows: 'to', dashes: true, hidden: true},
+        // {id: 'e2-4', from: 2, to: 4, label: 'C(10)', arrows: 'to'},
+        // {id: 'e3-4', from: 3, to: 4, label: 'C(10)', arrows: 'to', hidden: true,},
+        // {id: 'e4-5', from: 4, to: 5, label: 'D(15)', arrows: 'to', zigzag: true, hidden: true},
+        // {id: 'e5-6', from: 5, to: 6, label: 'E(10)', arrows: 'to'},
+        // {id: 'e1-7', from: 1, to: 7, label: 'F(15)', arrows: 'to', hidden: true, isTop:true},
+        // {id: 'e7-4', from: 7, to: 4, label: 'F(15)', arrows: 'to', hidden: true, isTop: true},
+        // {id: 'e5-8', from: 5, to: 8, label: 'G(15)', arrows: 'to', zigzag: true, hidden: true,isTop: true},
+        // {id: 'e5-9', from: 5, to: 9, label: 'H(15)', arrows: 'to', zigzag: true, hidden: true},
+        // {id: 'e6-10', from: 6, to: 10, label: 'I(15)', arrows: 'to'},
+        // {id: 'e8-10', from: 8, to: 10, label: 'I(15)', arrows: 'to', zigzag: true, hidden: true,isTop: true},
+        // {id: 'e9-10', from: 9, to: 10, label: 'I(15)', arrows: 'to', zigzag: true, hidden: true},
     ]);
 
     // 创建一个网络
@@ -332,29 +337,48 @@ document.addEventListener('DOMContentLoaded', function() {
     network = new vis.Network(container, data, options);
 
     $("#network canvas").attr("id","canvas");
+    // 获取当前视图的中心位置
+    var viewCenter = network.getViewPosition();
+    var x = viewCenter.x;
+    var y = viewCenter.y;
+
+    // 设置新的视图中心位置，向上移动画布
+    var newPosition = {x: x-200, y: y - 500}; // 向上移动 50 像素
+    // network.moveTo({x:  x-500, y: y - 800, scale: 0.5});
+    network.moveTo({
+        // position: {x: x+600, y: y + 600}, // 新的视图中心位置
+        scale: 1,                  // 新的缩放级别
+        offset: {x: -300, y: -300},       // 视图中心的偏移量（可选）
+    });
+
     // 自定义边绘制
     network.on("afterDrawing", function(ctx) {
         var edgePositions = network.getPositions();
         edges.forEach(function(edge) {
-            // console.log(edge)
+            console.log(edge)
+            ctx.strokeStyle = edge.color!=null?edge.color.color:"black";
+            ctx.linestyle = edge.dashes?'dashed':"";
             var from = edgePositions[edge.from];
             var to = edgePositions[edge.to];
+            var topFlag = edge.isTop;
+            var midistX = edge.midistX;
+            // if(isKeyPath){
+            //     ctx.strokeStyle = 'red';
+            // }
+            // if(isVirtual){
+            //     ctx.linestyle = 'dashed';
+            // }
             // console.log(from,to)
             if (from && to) {
-                ctx.strokeStyle = 'black';
                 ctx.lineWidth =  2;
                 ctx.font="12px Arial";
 
                 // 绘制折线段
                 if (edge.zigzag) {
+                    //直线折线
                     if(from.y == to.y){
-                        var dx = to.x - from.x;
-                        var dy = to.y - from.y;
-                        var length = Math.sqrt(dx * dx + dy * dy);
-                        var unitX = dx / length;
-                        var unitY = dy / length;
-                        var startX = to.x - unitX * 80;
-                        var startY = to.y - unitY * 80;
+                        var startX = to.x - midistX;
+                        var startY = to.y ;
                         var midst = {x:startX, y:startY};
                         var start = {x:from.x+14, y:from.y};
                         var end = {x:to.x-14, y:to.y};
@@ -363,71 +387,135 @@ document.addEventListener('DOMContentLoaded', function() {
                         drawArrowhead(ctx,end,0,15)
 
                     }else{
-                        if(from.y > to.y){
-                            var startX = 860;
-                            var startY = from.y;
-                            var start = {x:from.x+14, y:from.y};
-                            var freeStart = {x:startX, y:startY};
-                            var freeEnd = {x:to.x, y:from.y};
-                            var end = {x:to.x, y:to.y+14};
-                            ctx.beginPath();
-                            ctx.moveTo(start.x, start.y);
-                            ctx.lineTo(freeStart.x, freeStart.y);
-                            drawFreeline(ctx,start,freeStart,freeEnd)
-                            ctx.lineTo(freeEnd.x, freeEnd.y);
-                            ctx.lineTo(end.x, end.y);
-                            ctx.stroke();
-                            //绘制箭头 90 度：π/2 180 度：π 270 度： 3π/2 360 度：2π
-                            var rotate = Math.PI * 3 / 2;
-                            drawArrowhead(ctx,end,rotate,15)
-                            ctx.fillText(edge.label,(to.x-from.x)/2+from.x,from.y-10);
-                        }else{
-                            var start = {x:from.x, y:from.y+14};
-                            var midst = {x:from.x, y:to.y};
-                            var freeStart = {x:700, y:to.y};
-                            var freeEnd = {x:to.x-14, y:to.y};
-                            ctx.beginPath();
-                            ctx.moveTo(start.x, start.y);
-                            ctx.lineTo(midst.x, midst.y);
-                            ctx.stroke();
-                            drawFreeline(ctx,midst,freeStart,freeEnd)
-                            ctx.lineTo(freeEnd.x, freeEnd.y);
-                            ctx.stroke();
+                        //上
+                        if(topFlag){
+                            //右下
+                            if(from.y < to.y){
+                                var startX = to.x-midistX;
+                                var startY = from.y;
+                                var start = {x:from.x+14, y:from.y};
+                                var freeStart = {x:startX, y:startY};
+                                var freeEnd = {x:to.x, y:from.y};
+                                var end = {x:to.x, y:to.y-14};
+                                ctx.beginPath();
+                                ctx.moveTo(start.x, start.y);
+                                ctx.lineTo(freeStart.x, freeStart.y);
+                                drawFreeline(ctx,start,freeStart,freeEnd)
+                                ctx.lineTo(freeEnd.x, freeEnd.y);
+                                ctx.lineTo(end.x, end.y);
+                                ctx.stroke();
+                                //绘制箭头 90 度：π/2 180 度：π 270 度： 3π/2 360 度：2π
+                                var rotate = Math.PI / 2;
+                                drawArrowhead(ctx,end,rotate,15)
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,from.y-10);
+                            }else{
+                                //上右
+                                var start = {x:from.x, y:from.y-14};
+                                var midst = {x:from.x, y:to.y};
+                                var freeStart = {x:to.x-midistX, y:to.y};
+                                var freeEnd = {x:to.x-14, y:to.y};
+                                ctx.beginPath();
+                                ctx.moveTo(start.x, start.y);
+                                ctx.lineTo(midst.x, midst.y);
+                                ctx.stroke();
+                                drawFreeline(ctx,midst,freeStart,freeEnd)
+                                ctx.lineTo(freeEnd.x, freeEnd.y);
+                                ctx.stroke();
 
-                            //绘制箭头
-                            drawArrowhead(ctx,freeEnd,0,15)
-                            //绘制文本
-                            ctx.fillText(edge.label,(to.x-from.x)/2+from.x,to.y-10);
+                                //绘制箭头
+                                drawArrowhead(ctx,freeEnd,0,15)
+                                //绘制文本
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,to.y-10);
+                            }
+                        }else{
+                            //右上
+                            if(from.y > to.y){
+                                var startX = to.x-midistX;
+                                var startY = from.y;
+                                var start = {x:from.x+14, y:from.y};
+                                var freeStart = {x:startX, y:startY};
+                                var freeEnd = {x:to.x, y:from.y};
+                                var end = {x:to.x, y:to.y+14};
+                                ctx.beginPath();
+                                ctx.moveTo(start.x, start.y);
+                                ctx.lineTo(freeStart.x, freeStart.y);
+                                drawFreeline(ctx,start,freeStart,freeEnd)
+                                // ctx.lineTo(freeEnd.x, freeEnd.y);
+                                ctx.lineTo(end.x, end.y);
+                                ctx.stroke();
+                                //绘制箭头 90 度：π/2 180 度：π 270 度： 3π/2 360 度：2π
+                                var rotate = Math.PI * 3 / 2;
+                                drawArrowhead(ctx,end,rotate,15)
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,from.y-10);
+                            }else{
+                                //下右
+                                var start = {x:from.x, y:from.y+14};
+                                var midst = {x:from.x, y:to.y};
+                                var freeStart = {x:to.x-midistX, y:to.y};
+                                var freeEnd = {x:to.x-14, y:to.y};
+                                ctx.beginPath();
+                                ctx.moveTo(start.x, start.y);
+                                ctx.lineTo(midst.x, midst.y);
+                                ctx.stroke();
+                                drawFreeline(ctx,midst,freeStart,freeEnd)
+                                ctx.lineTo(freeEnd.x, freeEnd.y);
+                                ctx.stroke();
+
+                                //绘制箭头
+                                drawArrowhead(ctx,freeEnd,0,15)
+                                //绘制文本
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,to.y-10);
+                            }
                         }
                     }
                 }else{
                     //绘制直角线
                     if(from.y != to.y){
-                        var topFlag = false;
-                        nodes.forEach(function(node) {
-                            if(node.x>=node.x && node.x<=to.x){
-                                topFlag = true;
+                        //上
+                        if(topFlag){
+                           // 右下
+                           if(from.y < to.y){
+                                var start = {x:from.x+14, y:from.y};
+                                var midst = {x:to.x, y:from.y};
+                                var end = {x:to.x, y:to.y-14};
+                                strokeAngleLine(ctx,start,midst,end)
+                                //绘制箭头 90 度：π/2 180 度：π 270 度： 3π/2 360 度：2π
+                                var rotate = Math.PI / 2;
+                                drawArrowhead(ctx,end,rotate,15)
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,from.y-10);
+                            }else{
+                                //上右
+                                var start = {x:from.x, y:from.y-14};
+                                var midst = {x:from.x, y:to.y};
+                                var end = {x:to.x-14, y:to.y};
+                                strokeAngleLine(ctx,start,midst,end)
+                                //绘制箭头
+                                drawArrowhead(ctx,end,0,15)
+                                //绘制文本
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,to.y-10);
                             }
-                        })
-
-                        if(from.y > to.y){
-                            var start = {x:from.x+14, y:from.y};
-                            var midst = {x:to.x, y:from.y};
-                            var end = {x:to.x, y:to.y+14};
-                            strokeAngleLine(ctx,start,midst,end)
-                            //绘制箭头 90 度：π/2 180 度：π 270 度： 3π/2 360 度：2π
-                            var rotate = Math.PI * 3 / 2;
-                            drawArrowhead(ctx,end,rotate,15)
-                            ctx.fillText(edge.label,(to.x-from.x)/2+from.x,from.y-10);
                         }else{
-                            var start = {x:from.x, y:from.y+14};
-                            var midst = {x:from.x, y:to.y};
-                            var end = {x:to.x-14, y:to.y};
-                            strokeAngleLine(ctx,start,midst,end)
-                            //绘制箭头
-                            drawArrowhead(ctx,end,0,15)
-                            //绘制文本
-                            ctx.fillText(edge.label,(to.x-from.x)/2+from.x,to.y-10);
+                            //右上
+                            if(from.y > to.y){
+                                var start = {x:from.x+14, y:from.y};
+                                var midst = {x:to.x, y:from.y};
+                                var end = {x:to.x, y:to.y+14};
+                                strokeAngleLine(ctx,start,midst,end)
+                                //绘制箭头 90 度：π/2 180 度：π 270 度： 3π/2 360 度：2π
+                                var rotate = Math.PI * 3 / 2;
+                                drawArrowhead(ctx,end,rotate,15)
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,from.y-10);
+                            }else{
+                                //下右
+                                var start = {x:from.x, y:from.y+14};
+                                var midst = {x:from.x, y:to.y};
+                                var end = {x:to.x-14, y:to.y};
+                                strokeAngleLine(ctx,start,midst,end)
+                                //绘制箭头
+                                drawArrowhead(ctx,end,0,15)
+                                //绘制文本
+                                ctx.fillText(edge.label,(to.x-from.x)/2+from.x,to.y-10);
+                            }
                         }
 
                     }
@@ -438,6 +526,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     });
+
+     // 自定义边绘制
+    /*network.on("afterDrawing", function(ctx) {
+        var edgePositions = network.getPositions();
+        edges.forEach(function(edge) {
+            console.log(edge)
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth =  2;
+            ctx.font="12px Arial";
+            var from = edge.from;
+            var to = edge.to;
+            var isVirtual = edge.isVirtual;
+            var isKeyPath = edge.is_key_path;
+            var isWavy = edge.is_wavy;
+            // id: edgeKey, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
+            //                 isVirtual: isVirtual,hidden: hidden, is_key_path: is_key, is_wavy: is_wavy
+            if(isKeyPath){
+                ctx.strokeStyle = 'red';
+            }
+            if(isVirtual){
+                ctx.linestyle = 'dashed';
+            }
+            if(isWavy){
+                drawFreeline_new(ctx,from,to);
+            }else{
+                strokeLine(ctx,from,to)
+            }
+
+        });
+
+
+    });*/
+
+
     window.myGlobalVar = {
         numSquares:null,
         startDate: null,
@@ -540,9 +662,31 @@ function drawFreeline(ctx, start, midst, end){
     var unitY = dy / length;
     var startX = midst.x;
     var startY = midst.y;
-
+    var nums = (end.x - startX)/5;
+    console.log(nums)
     ctx.beginPath();
     ctx.moveTo(start.x, start.y);
+    ctx.lineTo(startX, startY);
+    for (var i = 0; i < nums; i++) {
+        startX += unitX * 5;
+        startY += unitY * 5;
+        ctx.lineTo(startX, i % 2 === 0 ? startY + unitX * 10 : startY - unitX * 10);
+    }
+    ctx.lineTo(end.x, end.y)
+    ctx.stroke();
+}
+
+//绘制折线
+function drawFreeline_new(ctx, start, end){
+    var dx = end.x - start.x;
+    var dy = end.y - start.y;
+    var length = Math.sqrt(dx * dx + dy * dy);
+    var unitX = dx / length;
+    var unitY = dy / length;
+    var startX = start.x;
+    var startY = start.y;
+
+    ctx.beginPath();
     ctx.lineTo(startX, startY);
     for (var i = 0; i < 10; i++) {
         startX += unitX * 5;
@@ -550,6 +694,12 @@ function drawFreeline(ctx, start, midst, end){
         ctx.lineTo(startX, i % 2 === 0 ? startY + unitX * 10 : startY - unitX * 10);
     }
     ctx.lineTo(end.x, end.y)
+    ctx.stroke();
+}
+function strokeLine(ctx, start, end) {
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
     ctx.stroke();
 }
 
@@ -609,6 +759,7 @@ function draw(){
                 "position":position,
                 "duration_date":duration_date
             }
+            var convertedInfo = convertData(info);
             // 新边
             var new_edges = [];
             var edge_info = data.edge_info;
@@ -620,21 +771,108 @@ function draw(){
                     var isVirtual = edgeValue["is_virtual"];
                     var from_date = duration_date[from_node][1];
                     var to_date = duration_date[to_node][0];
-                    var linestyle = null;
+                    var from_pos = edgeValue["from_pos"];
+                    var to_pos = edgeValue["to_pos"];
+                    console.log(from_pos,to_pos);
                     var hidden = false;
-                    if(calcuDays(from_date,to_date)>1){
-                        linestyle = "freeline";
+                    var is_freeline = false;
+                    var isTop = false;
+                    var days = calcuDays(from_date,to_date);
+                    var midistX = 0;
+                    if(days>1){
+                        is_freeline = true;
                         hidden = true;
+                        midistX = Math.abs(days)*squareSize;
                     }
-                    if(from_node.y != to_node.y){
+                    if(from_pos[1] < 0 || to_pos[1] < 0){
+                        isTop = true;
+                    }
+                    if(from_pos[1] != to_pos[1]){
                         hidden = true;
-                    }
-                    if (isVirtual){
-                        linestyle = "dashed";
                     }
                     new_edges.push({
                             id: edgeKey, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
-                            linestyle: linestyle,hidden: hidden, is_key_path: edgeValue["is_key_path"]+""
+                            zigzag: is_freeline,is_virtual: isVirtual,hidden: hidden,isTop:isTop,
+                            color: {color: edgeValue["is_key_path"]?"red":"black",},
+                            dashes:isVirtual?[5,5]:false,midistX:midistX,
+                            is_key_path: edgeValue["is_key_path"]+""
+                    });
+                }
+            }
+
+
+            // 清空节点和边
+            nodes.clear();
+            edges.clear();
+            nodes.add(convertedInfo);
+            edges.add(new_edges);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error: ' + error);
+        }
+    });
+
+
+}
+
+function draw_data(){
+    var allsheets = luckysheet.getAllSheets();
+    var sheetData = allsheets[0].data;
+    var data = [];
+    for (let i = 1; i < sheetData.length; i++) {
+        var row = sheetData[i];
+        if(areAllElementsEmpty(row, row.length)){
+            break;
+        }
+
+        var rowData = {};
+        rowData["identifier"] = row[0]==null ? "" : row[0].m;
+        rowData["partition"] = row[1]==null ? "" : row[1].m;
+        rowData["classify"] = row[2]==null ? "" : row[2].m;
+        rowData["name"] = row[3]==null ? "" : row[3].m;
+        rowData["duration"] = row[4]==null ? "" : row[4].m;
+        rowData["prerequisite"] = row[5]==null ? "" : row[5].m;
+        rowData["start_date"] = row[6]==null ? "" : row[6].m;
+        rowData["end_date"] = row[7]==null ? "" : row[7].m;
+        rowData["cost"] = row[8]==null ? "" : row[8].m;
+        data.push(rowData);
+    }
+    var paydata = {
+        "work_data":data
+    }
+    $.ajax({
+        url: '/data-new',
+        type: 'POST',
+        data: JSON.stringify(paydata),
+        cache: false,         //不设置缓存
+        processData: false,  // 不处理数据
+        contentType: "application/json",   // 不设置内容类型
+        success: function(data) {
+            console.log(data);
+            var position = data.position;
+
+            //网络图
+            var info = {
+                "position":position,
+            }
+            // 新边
+            var new_edges = [];
+            var edge_info = data.edge_info;
+            for (const edgeKey in edge_info) {
+                if (edge_info.hasOwnProperty(edgeKey)) {
+                    const edgeValue = edge_info[edgeKey];
+                    var coord = edgeValue["coord"];
+                    var from_node = coord[0];
+                    var to_node = coord[1];
+                    from_node = DOMtoCanvas(from_node[0]*squareSize+10,from_node[1]*100+200)
+                    to_node = DOMtoCanvas(to_node[0]*squareSize+10,to_node[1]*100+200)
+                    var isVirtual = edgeValue["is_virtual"];
+                    var is_wavy = edgeValue["is_wavy"];
+                    var is_key = edgeValue["is_key"];
+
+                    new_edges.push({
+                            id: edgeKey, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
+                            isVirtual: isVirtual,hidden: true, is_key_path: is_key, is_wavy: is_wavy
                     });
                 }
             }
@@ -653,12 +891,13 @@ function draw(){
 
 
 }
+
 //判断数组是否全部为空
 function areAllElementsEmpty(row, i) {
     return row.slice(0, i + 1).every(element => element === null);
 }
 function convertData(info) {
-    var squareSize = 5;
+    // var squareSize = 5;
     // 创建一个空数组来存储转换后的数据
     var convertedData = [];
 
@@ -712,22 +951,12 @@ function calcuDays(dateString1, dateString2) {
 
 // 定义一个函数来绘制方块
 function drawSquares(ctx, numSquares, startDate) {
-    // 获取 Canvas 元素
-    // var canvas = document.getElementById("canvas");
-    // // 获取 2D 绘图上下文
-    // var ctx = canvas.getContext('2d');
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 设置方块大小
-    var squareSize = 20;
-
-    // 获取当前日期
-    // var today = new Date(startDate);
     var currentDay = startDate.getDate();
     var currentMonth = startDate.getMonth();
+    var year = startDate.getFullYear();
     var day = currentDay;
     // 获取年份
-    var year = startDate.getFullYear();
     var monthX = 0;
     var yearX = 0;
     // 循环绘制方块和文本
@@ -741,13 +970,13 @@ function drawSquares(ctx, numSquares, startDate) {
             day = 1;
             // 绘制月份
             // 绘制方块框线
-            var position = DOMtoCanvas(monthX,20);
+            var position = DOMtoCanvas(monthX,squareSize);
             monthX = position.x;
             var monthY = position.y;
             ctx.strokeRect(monthX, monthY, x-monthX, squareSize);
             var monthText = new Date(startDate.getFullYear(), currentMonth, 1).toLocaleString('default', { month: 'long' });
             var monthTextWidth = ctx.measureText(monthText).width;
-            var textPos = DOMtoCanvas(monthX + (x - monthX - monthTextWidth) / 2,20 + (squareSize + 12) / 2);
+            var textPos = DOMtoCanvas(monthX + (x - monthX - monthTextWidth) / 2,squareSize + (squareSize + 6) / 2);
             ctx.fillText(monthText, textPos.x, textPos.y);
             monthX = x;
             currentMonth++;
@@ -760,7 +989,7 @@ function drawSquares(ctx, numSquares, startDate) {
                 var monthY = position.y;
                 ctx.strokeRect(yearX, monthY, x-yearX, squareSize);
                 var yearTextWidth = ctx.measureText(year).width;
-                var textPos = DOMtoCanvas(yearX + (squareSize - yearTextWidth) / 2,12);
+                var textPos = DOMtoCanvas(yearX + (squareSize - yearTextWidth) / 2,6);
                 ctx.fillText(year, textPos.x, textPos.y);
                 year++;
                 yearX = x;
@@ -772,22 +1001,22 @@ function drawSquares(ctx, numSquares, startDate) {
         day++;
 
         // 设置文本样式
-        ctx.font = "12px Arial";
+        ctx.font = "6px Arial";
         ctx.fillStyle = "black";
 
         // 计算文本的宽度和高度
         var textWidth = ctx.measureText(text).width;
-        var textHeight = 12;
+        var textHeight = 6;
 
         // 计算文本的 x 和 y 坐标，使其居中于方块
-        var textPosition = DOMtoCanvas(x + (squareSize - textWidth) / 2,40 + (squareSize + textHeight) / 2);
+        var textPosition = DOMtoCanvas(x + (squareSize - textWidth) / 2,squareSize*2 + (squareSize + textHeight) / 2);
         var textX = textPosition.x;
         var textY = textPosition.y;
         // 设置框线样式
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
 
-        var rectPosition = DOMtoCanvas(x,40);
+        var rectPosition = DOMtoCanvas(x,squareSize*2);
         // 绘制方块框线
         ctx.strokeRect(rectPosition.x, rectPosition.y, squareSize, squareSize);
 
@@ -796,17 +1025,17 @@ function drawSquares(ctx, numSquares, startDate) {
 
     }
     // 绘制最后一月的方块框线
-    var monthPosition = DOMtoCanvas(monthX,20);
+    var monthPosition = DOMtoCanvas(monthX,squareSize);
     ctx.strokeRect(monthPosition.x, monthPosition.y, x-monthX+squareSize, squareSize);
     var monthText = new Date(startDate.getFullYear(), currentMonth, 1).toLocaleString('default', { month: 'long' });
     var monthTextWidth = ctx.measureText(monthText).width;
-    var textPos = DOMtoCanvas(monthX + (x - monthX - monthTextWidth) / 2,20 + (squareSize + 12) / 2);
+    var textPos = DOMtoCanvas(monthX + (x - monthX - monthTextWidth) / 2,squareSize + (squareSize + 6) / 2);
     ctx.fillText(monthText, textPos.x, textPos.y);
     // 绘制最后一年的方块框线
     var yearPosition = DOMtoCanvas(yearX,0);
     ctx.strokeRect(yearPosition.x, yearPosition.y, x-yearX+squareSize, squareSize);
     var yearTextWidth = ctx.measureText(year).width;
-    var yearTextPos = DOMtoCanvas(yearX + (x - yearX - yearTextWidth) / 2,12);
+    var yearTextPos = DOMtoCanvas(yearX + (x - yearX - yearTextWidth) / 2,6);
     ctx.fillText(year, yearTextPos.x, yearTextPos.y);
 
 }
@@ -823,8 +1052,8 @@ function canvasToDOM(x,y){
 }
 //将 DOM 坐标转换为 Canvas 坐标
 function DOMtoCanvas(x,y){
-    var canvasPosition  = network.DOMtoCanvas({x: x, y: y});
-    return canvasPosition;
+    // var canvasPosition  = network.DOMtoCanvas({x: x, y: y});
+    return {x: x, y: y};
 }
 
 
@@ -837,6 +1066,16 @@ function exportImg() {
        a.href = window.URL.createObjectURL(blob);
        a.click();
     });
+    // var dataURL = networkCanvas.toDataURL();
+    // console.log(dataURL);
+    // var fullQuality = canvas.toDataURL("image/png");
+    // var a = document.createElement("a");
+    // document.body.appendChild(a);
+    // a.download = "network" + ".png";
+    // a.href = fullQuality;
+    // a.click();
+
+
 
 }
 
