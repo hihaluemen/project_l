@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         c: 1,
                         v: {
                           ct: { fa: 'General', t: 'g' },
-                          m: '分区',
-                          v: '分区'
+                          m: '工程名称',
+                          v: '工程名称'
                         }
                       },
                       {
@@ -88,6 +88,24 @@ document.addEventListener('DOMContentLoaded', function() {
                       {
                         r: 0,
                         c: 8,
+                        v: {
+                          ct: { fa: 'General', t: 'g' },
+                          m: '实际开始时间',
+                          v: '实际开始时间'
+                        }
+                      },
+                        {
+                        r: 0,
+                        c: 9,
+                        v: {
+                          ct: { fa: 'General', t: 'g' },
+                          m: '实际结束时间',
+                          v: '实际结束时间'
+                        }
+                      },
+                        {
+                        r: 0,
+                        c: 10,
                         v: {
                           ct: { fa: 'General', t: 'g' },
                           m: '成本信息',
@@ -194,10 +212,11 @@ document.addEventListener('DOMContentLoaded', function() {
             container: 'luckysheet' ,//worksheet为容器id
             title: '双代号网络', // 设定表格名称
             showinfobar:false,
-            showsheetbar:false,
+            showsheetbar:true,
             userInfo:false,
             lang:"zh",
-            column:"9",
+            column:"11",
+            showstatisticBar:true,
             data: datas,
              hook: {
                   cellEditBefore: function(range){
@@ -213,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
                           return false;
                       }
 
-                      if(columnIndex == 6 || columnIndex == 7){
+                      if(columnIndex == 6 || columnIndex == 7 || columnIndex == 8 || columnIndex == 9){
                           console.log(columnIndex)
                           // 创建一个隐藏的输入元素用于触发 Flatpickr
                           var inputElement = document.createElement('input');
@@ -241,6 +260,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 // 移除输入元素和时间选择器
                                 document.body.removeChild(inputElement);
                                 inputElement = null;
+                                //更新工期
+                                  var startDate = luckysheet.getCellValue(rowIdx, 6);
+                                  var endDate = luckysheet.getCellValue(rowIdx, 7);
+                                  var days = calculateDaysBetweenDates(startDate, endDate);
+                                  luckysheet.setCellValue(rowIdx, 4,days,{isRefresh:true});
 
                                 // 返回false以阻止单元格进入编辑状态
                                 return false;
@@ -254,17 +278,37 @@ document.addEventListener('DOMContentLoaded', function() {
                       }
 
 
-                 }
+                 },
+                 rangePasteBefore: function (range, data) {
+                    // console.info('cellUpdated', r, c, oldValue, newValue, isRefresh);
+                    var rowCount = 0;
+                    var sheets = luckysheet.getAllSheets();
+                    var sheetData = sheets[0].data;
+                    for (var i = 1; i < sheetData.length; i++) {
+                        if (sheetData[i].length > 0) {
+                            rowCount++;
+                            // 判断该行是否完全为空
+                            var isEmpty = sheetData[i].every(function(cell) {
+                                return cell === null || cell === undefined || cell.v === '';
+                            });
+                            if (!isEmpty) {
+                                luckysheet.setCellValue(i, 0, i);
+                            }
+                        }
+                    }
+                }
+
+
              }
         }
         luckysheet.create(options)
-
-
+        luckysheet.setHorizontalFrozen(false)
 
 
     })
 
-    luckysheet.setHorizontalFrozen(false)
+
+
 
 
     // 初网络图部分
@@ -362,9 +406,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var to = edgePositions[edge.to];
             var topFlag = edge.isTop;
             var midistX = edge.midistX;
-            // if(isKeyPath){
-            //     ctx.strokeStyle = 'red';
-            // }
+            var isKeyPath = edge.is_key_path;
+            if(isKeyPath){
+                edge.zigzag = false;
+            }
             // if(isVirtual){
             //     ctx.linestyle = 'dashed';
             // }
@@ -523,7 +568,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             }
         });
-
+        nodes.forEach(function(node) {
+            var proName = node.proName;
+            if(proName){
+                var x = node.x;
+                var y = node.y;
+                ctx.fillText(proName,x-50,y-50);
+            }
+        })
 
     });
 
@@ -704,13 +756,35 @@ function strokeLine(ctx, start, end) {
 }
 
 function draw(){
+    var rowCount = 0;
+    var sheets = luckysheet.getAllSheets();
+    var sheetData = sheets[0].data;
+    for (var i = 1; i < sheetData.length; i++) {
+        if (sheetData[i].length > 0) {
+            rowCount++;
+            // 判断该行是否完全为空
+            var isEmpty = sheetData[i].every(function(cell) {
+                return cell === null || cell === undefined || cell.v === '';
+            });
+            if (!isEmpty) {
+                luckysheet.setCellValue(i, 0, i);
+            }
+        }
+    }
     var allsheets = luckysheet.getAllSheets();
     var sheetData = allsheets[0].data;
     var data = [];
+    var identifiers = [];
     for (let i = 1; i < sheetData.length; i++) {
         var row = sheetData[i];
         if(areAllElementsEmpty(row, row.length)){
             break;
+        }
+        if(i == 0){
+            identifiers.push(row[1]);
+        }
+        if(row[1]!=null && sheetData[i+1]!= null && row[1]!= sheetData[i+1][1]){
+            identifiers.push(sheetData[i+1][0]);
         }
 
         var rowData = {};
@@ -759,7 +833,7 @@ function draw(){
                 "position":position,
                 "duration_date":duration_date
             }
-            var convertedInfo = convertData(info);
+            var convertedInfo = convertData(info, identifiers);
             // 新边
             var new_edges = [];
             var edge_info = data.edge_info;
@@ -896,7 +970,7 @@ function draw_data(){
 function areAllElementsEmpty(row, i) {
     return row.slice(0, i + 1).every(element => element === null);
 }
-function convertData(info) {
+function convertData(info,identifiers) {
     // var squareSize = 5;
     // 创建一个空数组来存储转换后的数据
     var convertedData = [];
@@ -911,7 +985,7 @@ function convertData(info) {
                 label: key,
                 x: domPosition.x,
                 y: domPosition.y,
-
+                proName:identifiers.contains(key),
             });
         }
     }
@@ -1079,4 +1153,29 @@ function exportImg() {
 
 }
 
-
+function exportSheet(){
+    var allsheets = luckysheet.getAllSheets();
+    var sheetData = allsheets[0].data;
+    var sheetJson = JSON.stringify(sheetData);
+    console.log(sheetJson);
+    str = '';
+    for(let i = 0 ; i < sheetData.length ; i++ ){
+        if(areAllElementsEmpty(sheetData[i], sheetData[i].length)){
+            break;
+        }
+        for(const key in sheetData[i]){
+            var item = sheetData[i][key];
+            console.log(item)
+            str+=`${item==null ? "" :item.m + '\t'},`;
+        }
+        str+='\n';
+    }
+    // encodeURIComponent解决中文乱码
+    const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+    // 通过创建a标签实现
+    const link = document.createElement("a");
+    link.href = uri;
+    // 对下载的文件命名
+    link.download =  "下载数据.csv";
+    link.click();
+}
