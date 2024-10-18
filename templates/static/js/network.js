@@ -250,24 +250,25 @@ document.addEventListener('DOMContentLoaded', function() {
                           flatpickr(inputElement, {
                               enableTime: false, // 启用时间选择
                               dateFormat: 'Y-m-d', // 设置时间格式，
-                              locale: "zh", // 设置中文
+                              local: "zh", // 设置中文
                               defaultDate: cellValue, // 设置默认日期
 
                               // 当用户选择时间后，更新单元格的值
                               onChange: function(selectedDates, dateStr) {
-                                // 更新Luckysheet单元格的值
-                                luckysheet.setCellValue(rowIdx, columnIndex,dateStr,{isRefresh:true});
-                                // 移除输入元素和时间选择器
-                                document.body.removeChild(inputElement);
-                                inputElement = null;
-                                //更新工期
+                                  // 更新Luckysheet单元格的值
+                                  luckysheet.setCellValue(rowIdx, columnIndex,dateStr,{isRefresh:false});
+                                  // 移除输入元素和时间选择器
+                                  document.body.removeChild(inputElement);
+                                  inputElement = null;
+                                  //更新工期
                                   var startDate = luckysheet.getCellValue(rowIdx, 6);
                                   var endDate = luckysheet.getCellValue(rowIdx, 7);
                                   var days = calculateDaysBetweenDates(startDate, endDate);
-                                  luckysheet.setCellValue(rowIdx, 4,days,{isRefresh:true});
+                                  luckysheet.setCellValue(rowIdx, 4,days);
+                                  luckysheet.setCellValue(rowIdx, 4, {fc:"#FF0000", isRefresh:true})
 
-                                // 返回false以阻止单元格进入编辑状态
-                                return false;
+                                  // 返回false以阻止单元格进入编辑状态
+                                  return false;
                               }
                             });
 
