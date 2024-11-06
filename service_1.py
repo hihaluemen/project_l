@@ -14,7 +14,7 @@ from back_1 import get_all_pre, get_adjacency, get_key_path
 from Net_Position import get_position
 import templates
 from excel_parse import get_worls, get_work_from_json
-from New_Net_Position import get_new_position_info
+from New_Net_Position import get_new_position_info, deal_position
 
 
 
@@ -97,6 +97,7 @@ async def receive_data_new(work_data: WorkData):
         adjacency_list,
         work_l
     )
+    position = deal_position(position)
     ans = dict()
     ans['position'] = position
     ans['edge_info'] = edge_info

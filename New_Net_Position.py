@@ -370,6 +370,22 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
 
     return xu_result, visible_points
 
+
+def deal_position(positions):
+    if not positions:
+        return {}
+
+    if len(positions) == 1:
+        return {"1": positions[0]}
+
+    new_positions = {}
+
+    for i, point in enumerate(positions[1:], 1):
+        new_positions[i] = point
+    
+    return new_positions
+
+
 if __name__ == "__main__":
     # 使用新的示例数据
     key_path = ['1', '2', '5', '6']
