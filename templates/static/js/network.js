@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
     network.on("afterDrawing", function(ctx) {
         var edgePositions = network.getPositions();
         edges.forEach(function(edge) {
-            console.log(edge)
+            // console.log(edge)
             ctx.strokeStyle = edge.color!=null?edge.color.color:"black";
             ctx.linestyle = edge.dashes?'dashed':"";
             var from = edgePositions[edge.from];
@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(proName){
                 var x = node.x;
                 var y = node.y;
-                ctx.fillText(proName,x-50,y-50);
+                ctx.fillText(proName,x-70,y-50);
             }
         })
 
@@ -673,13 +673,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 添加悬停交互
-    network.on("hoverNode", function (params) {
-        console.log('Hovering node:', params.node);
-    });
-
-    network.on("hoverEdge", function (params) {
-        console.log('Hovering edge:', params.edge);
-    });
+    // network.on("hoverNode", function (params) {
+    //     console.log('Hovering node:', params.node);
+    // });
+    //
+    // network.on("hoverEdge", function (params) {
+    //     console.log('Hovering edge:', params.edge);
+    // });
 
 
 });
@@ -775,19 +775,21 @@ function draw(){
     var allsheets = luckysheet.getAllSheets();
     var sheetData = allsheets[0].data;
     var data = [];
-    var identifiers = [];
+    var identifiers = {};
+    var seenValues = new Set(); // 用于跟踪已经添加过的值
     for (let i = 1; i < sheetData.length; i++) {
         var row = sheetData[i];
         if(areAllElementsEmpty(row, row.length)){
             break;
         }
-        if(i == 0){
-            identifiers.push(row[1]);
+        var value = row[1].m;
+        // 检查值是否已经在 seenValues 集合中
+        if (!seenValues.has(value)) {
+            // 如果值不存在，则添加到 identifiers 和 seenValues 中
+            identifiers[row[0].m] = value;
+            seenValues.add(value);
         }
-        if(row[1]!=null && sheetData[i+1]!= null && row[1]!= sheetData[i+1][1]){
-            identifiers.push(sheetData[i+1][0]);
-        }
-
+        console.log(identifiers)
         var rowData = {};
         rowData["identifier"] = row[0]==null ? "" : row[0].m;
         rowData["partition"] = row[1]==null ? "" : row[1].m;
@@ -797,12 +799,14 @@ function draw(){
         rowData["prerequisite"] = row[5]==null ? "" : row[5].m;
         rowData["start_date"] = row[6]==null ? "" : row[6].m;
         rowData["end_date"] = row[7]==null ? "" : row[7].m;
-        rowData["cost"] = row[8]==null ? "" : row[8].m;
+        rowData["cost"] = row[10]==null ? "" : row[10].m;
         data.push(rowData);
     }
     var paydata = {
         "work_data":data
     }
+    // console.log(paydata)
+    // console.log(JSON.stringify(paydata))
     $.ajax({
         url: '/data',
         type: 'POST',
@@ -812,6 +816,7 @@ function draw(){
         contentType: "application/json",   // 不设置内容类型
         success: function(data) {
             console.log(data);
+            console.log(JSON.stringify(data))
             var position = data.new_position;
             var duration_date = data.duration_date;
             //时间
@@ -848,7 +853,7 @@ function draw(){
                     var to_date = duration_date[to_node][0];
                     var from_pos = edgeValue["from_pos"];
                     var to_pos = edgeValue["to_pos"];
-                    console.log(from_pos,to_pos);
+                    // console.log(from_pos,to_pos);
                     var hidden = false;
                     var is_freeline = false;
                     var isTop = false;
@@ -859,6 +864,7 @@ function draw(){
                         hidden = true;
                         midistX = Math.abs(days)*squareSize;
                     }
+                    // console.log(from_pos,to_pos)
                     if(from_pos[1] < 0 || to_pos[1] < 0){
                         isTop = true;
                     }
@@ -881,6 +887,25 @@ function draw(){
             edges.clear();
             nodes.add(convertedInfo);
             edges.add(new_edges);
+            var nodesActual = [
+                {id: 'n1', label: '1', x: 0, y: 200+500},
+                {id: 'n2', label: '2', x: 200, y: 200+500},
+                {id: 'n3', label: '3', x: 200, y: 300+500},
+                {id: 'n4', label: '4', x: 400, y: 200+500},
+                {id: 'n5', label: '5', x: 600, y: 200+500},
+                {id: 'n6', label: '6', x: 800, y: 200+500},
+            ];
+            // 创建边
+            var edgesActual = [
+                {id: 'e1-2', from: 'n1', to: 'n2', label: 'A(15)', arrows: 'to'},
+                {id: 'e1-3', from: 'n1', to: 'n3', label: 'B(20)', arrows: 'to'},
+                {id: 'e2-4', from: 'n2', to: 'n4', label: 'C(10)', arrows: 'to'},
+                {id: 'e3-4', from: 'n3', to: 'n4', label: 'C(10)', arrows: 'to'},
+                {id: 'e4-5', from: 'n4', to: 'n5', label: 'D(15)', arrows: 'to'},
+                {id: 'e5-6', from: 'n5', to: 'n6', label: 'E(10)', arrows: 'to'},
+            ];
+            nodes.add(nodesActual);
+            edges.add(edgesActual);
         },
         error: function(xhr, status, error) {
             console.error('Error: ' + error);
@@ -986,14 +1011,37 @@ function convertData(info,identifiers) {
                 label: key,
                 x: domPosition.x,
                 y: domPosition.y,
-                proName:identifiers.contains(key),
+                proName:identifiers[key],
             });
         }
     }
-
     // 返回转换后的数据数组
     return convertedData;
 }
+
+function convertDataActual(info,identifiers) {
+    // var squareSize = 5;
+    // 创建一个空数组来存储转换后的数据
+    var convertedData = [];
+
+    // 遍历 position 对象中的每个属性
+    for (var key in info.position) {
+        if (info.position.hasOwnProperty(key)) {
+            var domPosition = DOMtoCanvas(info.position[key][0]*squareSize+10,info.position[key][1]*100+800)
+            // 构造新的数据对象并添加到数组中
+            convertedData.push({
+                id: key ,
+                label: key,
+                x: domPosition.x,
+                y: domPosition.y,
+                proName:identifiers[key],
+            });
+        }
+    }
+    // 返回转换后的数据数组
+    return convertedData;
+}
+
 //计算两个日期之间的天数差
 function calculateDaysBetweenDates(dateString1, dateString2) {
   // 将日期字符串转换为 Date 对象
