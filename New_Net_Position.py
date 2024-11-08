@@ -1,6 +1,7 @@
 from datetime import datetime
 import matplotlib.pyplot as plt
 import networkx as nx
+import re
 
 
 def custom_sort(successors, adjacency_dict):
@@ -246,7 +247,7 @@ def adjust_virtual_lines(xie_result):
             if not other_lines_with_same_start:
                 # 如果没有其他线段以相同坐标作为起点，将虚线变为实线
                 if start_coord[0] == info['coord'][1][0]:  # 垂直线
-                    adjusted_result[f'实线---{work_paint[6:]}'] = {
+                    adjusted_result[f'实线---{work_paint[5:]}'] = {
                         'coord': info['coord'],
                         'need_right_angle': info['need_right_angle'],
                         'is_wavy': info['is_wavy'],
@@ -257,17 +258,29 @@ def adjust_virtual_lines(xie_result):
                     print(info)
                     middle_coord = (info['coord'][1][0], start_coord[1])
                     print(middle_coord)
-                    adjusted_result[f'实线 {work_paint[6:]}的零'] = {
+                    # adjusted_result[f'实线 {work_paint[5:]}的零'] = {
+                    #     'coord': [start_coord, middle_coord],
+                    #     'need_right_angle': info['need_right_angle'],
+                    #     'is_wavy': info['is_wavy'],
+                    #     'is_virtual': False
+                    # }
+                    # adjusted_result[f'实线 {work_paint[5:]}的一'] = {
+                    #     'coord': [middle_coord, info['coord'][1]],
+                    #     'need_right_angle': info['need_right_angle'],
+                    #     'is_wavy': info['is_wavy'],
+                    #     'is_virtual': False
+                    # }
+                    adjusted_result[f'实线 {work_paint[5:]}的零 -折线'] = {
                         'coord': [start_coord, middle_coord],
                         'need_right_angle': info['need_right_angle'],
-                        'is_wavy': info['is_wavy'],
+                        'is_wavy': True,
                         'is_virtual': False
                     }
-                    adjusted_result[f'实线 {work_paint[6:]}的一'] = {
+                    adjusted_result[f'实线 {work_paint[5:]}的一 -虚线'] = {
                         'coord': [middle_coord, info['coord'][1]],
                         'need_right_angle': info['need_right_angle'],
                         'is_wavy': info['is_wavy'],
-                        'is_virtual': False
+                        'is_virtual': True
                     }
             else:
                 # 如果有其他线段以相同坐标作为起点，保持为虚线
@@ -275,13 +288,13 @@ def adjust_virtual_lines(xie_result):
                     adjusted_result[work_paint] = info
                 else:  # 非垂直线，需要分割
                     middle_coord = (info['coord'][1][0], start_coord[1])
-                    adjusted_result[f'虚线 {work_paint[6:]}的零'] = {
+                    adjusted_result[f'虚线 {work_paint[5:]}的零'] = {
                         'coord': [start_coord, middle_coord],
                         'need_right_angle': info['need_right_angle'],
                         'is_wavy': info['is_wavy'],
                         'is_virtual': True
                     }
-                    adjusted_result[f'虚线 {work_paint[6:]}的一'] = {
+                    adjusted_result[f'虚线 {work_paint[5:]}的一'] = {
                         'coord': [middle_coord, info['coord'][1]],
                         'need_right_angle': info['need_right_angle'],
                         'is_wavy': info['is_wavy'],
@@ -363,8 +376,19 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
     # 调用新函数处理虚线
     xu_result = adjust_virtual_lines(xie_result)
     # 添加is_key字段
+    # for key, value in xu_result.items():
+    #     value['is_key'] = any(node in key for node in key_path)
+
     for key, value in xu_result.items():
-        value['is_key'] = any(node in key for node in key_path)
+        extracted_chars = re.findall(r'[A-Za-z0-9]', key)
+        tmp_n = 0
+        for char in extracted_chars:
+            if char in key_path:
+                tmp_n += 1
+        if len(extracted_chars) == tmp_n and not value['is_wavy']:
+            value['is_key'] = True
+        else:
+            value['is_key'] = False
     print('虚线处理结果为：')
     print(xu_result)
 

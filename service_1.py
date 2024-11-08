@@ -16,10 +16,9 @@ import templates
 from excel_parse import get_worls, get_work_from_json
 from New_Net_Position import get_new_position_info, deal_position
 
-
-
 app = FastAPI()
 app.mount("/page", StaticFiles(directory="./templates", html=True), name="page")
+
 
 # 请求模型
 class WorkflowDiagramRequest(BaseModel):
@@ -98,10 +97,11 @@ async def receive_data_new(work_data: WorkData):
         work_l
     )
     position = deal_position(position)
+    # new_edge_info = find_longest_path(position, edge_info)
     ans = dict()
     ans['position'] = position
     ans['edge_info'] = edge_info
-
+    # ans['new_edge_info'] = new_edge_info
 
     return ans
 
