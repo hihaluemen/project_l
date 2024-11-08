@@ -299,76 +299,76 @@ payload = {
   ]
 }
 
-payload = {
-  "work_data": [
-  {
-    "identifier": "A",
-    "partition": "土建工程",
-    "classify": "基础施工",
-    "name": "基础开挖",
-    "duration": 5,
-    "prerequisite": "",
-    "start_date": "2023-04-01",
-    "end_date": "2023-04-06",
-    "cost": ""
-  },
-  {
-    "identifier": "B",
-    "partition": "土建工程",
-    "classify": "主体结构",
-    "name": "混凝土浇筑",
-    "duration": 7,
-    "prerequisite": "A",
-    "start_date": "2023-04-06",
-    "end_date": "2023-04-13",
-    "cost": ""
-  },
-  {
-    "identifier": "C",
-    "partition": "电气工程",
-    "classify": "电缆敷设",
-    "name": "主电缆铺设",
-    "duration": 7,
-    "prerequisite": "A",
-    "start_date": "2023-04-06",
-    "end_date": "2023-04-13",
-    "cost": ""
-  },
-  {
-    "identifier": "D",
-    "partition": "电气工程",
-    "classify": "设备安装",
-    "name": "变压器安装",
-    "duration": 2,
-    "prerequisite": "B",
-    "start_date": "2023-04-13",
-    "end_date": "2023-04-15",
-    "cost": ""
-  },
-  {
-    "identifier": "E",
-    "partition": "暖通空调工程",
-    "classify": "管道安装",
-    "name": "冷热水管路安装",
-    "duration": 4,
-    "prerequisite": "B,C",
-    "start_date": "2023-04-13",
-    "end_date": "2023-04-17",
-    "cost": ""
-  },
-  {
-    "identifier": "F",
-    "partition": "暖通空调工程",
-    "classify": "设备安装",
-    "name": "空调机组安装",
-    "duration": 3,
-    "prerequisite": "D,E",
-    "start_date": "2023-04-17",
-    "end_date": "2023-04-19",
-    "cost": ""
-  }
-]
-}
+# payload = {
+#   "work_data": [
+#   {
+#     "identifier": "A",
+#     "partition": "土建工程",
+#     "classify": "基础施工",
+#     "name": "基础开挖",
+#     "duration": 5,
+#     "prerequisite": "",
+#     "start_date": "2023-04-01",
+#     "end_date": "2023-04-06",
+#     "cost": ""
+#   },
+#   {
+#     "identifier": "B",
+#     "partition": "土建工程",
+#     "classify": "主体结构",
+#     "name": "混凝土浇筑",
+#     "duration": 7,
+#     "prerequisite": "A",
+#     "start_date": "2023-04-06",
+#     "end_date": "2023-04-13",
+#     "cost": ""
+#   },
+#   {
+#     "identifier": "C",
+#     "partition": "电气工程",
+#     "classify": "电缆敷设",
+#     "name": "主电缆铺设",
+#     "duration": 7,
+#     "prerequisite": "A",
+#     "start_date": "2023-04-06",
+#     "end_date": "2023-04-13",
+#     "cost": ""
+#   },
+#   {
+#     "identifier": "D",
+#     "partition": "电气工程",
+#     "classify": "设备安装",
+#     "name": "变压器安装",
+#     "duration": 2,
+#     "prerequisite": "B",
+#     "start_date": "2023-04-13",
+#     "end_date": "2023-04-15",
+#     "cost": ""
+#   },
+#   {
+#     "identifier": "E",
+#     "partition": "暖通空调工程",
+#     "classify": "管道安装",
+#     "name": "冷热水管路安装",
+#     "duration": 4,
+#     "prerequisite": "B,C",
+#     "start_date": "2023-04-13",
+#     "end_date": "2023-04-17",
+#     "cost": ""
+#   },
+#   {
+#     "identifier": "F",
+#     "partition": "暖通空调工程",
+#     "classify": "设备安装",
+#     "name": "空调机组安装",
+#     "duration": 3,
+#     "prerequisite": "D,E",
+#     "start_date": "2023-04-17",
+#     "end_date": "2023-04-19",
+#     "cost": ""
+#   }
+# ]
+# }
 
 
 
