@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
         physics: false,
         edges: {
             font: {
-                size: 12,
+                size: 10,
                 align: 'middle'
             },
             width: 2,
@@ -365,9 +365,9 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         nodes: {
             shape: 'circle',
-            size: 30,
+            size: 10,
             font: {
-                size: 14
+                size: 8
             },
             borderWidth: 2,
             color: {
@@ -397,19 +397,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 自定义边绘制
-    network.on("afterDrawing", function(ctx) {
-        var edgePositions = network.getPositions();
+    /*network.on("afterDrawing", function(ctx) {
+        // var edgePositions = network.getPositions();
         edges.forEach(function(edge) {
             // console.log(edge)
             ctx.strokeStyle = edge.color!=null?edge.color.color:"black";
             ctx.linestyle = edge.dashes?'dashed':"";
-            var from = edgePositions[edge.from];
-            var to = edgePositions[edge.to];
-            var topFlag = edge.isTop;
-            var midistX = edge.midistX;
+            var from = edge.from;
+            var to = edge.to;
+            var from_pos = edge.from_pos;
+            var to_pos = edge.to_pos;
+            var hidden = edge.hidden;
             var isKeyPath = edge.is_key_path;
-            if(isKeyPath){
-                edge.zigzag = false;
+            if(hidden){
+                ctx.lineWidth =  2;
+                ctx.font="12px Arial";
             }
             // if(isVirtual){
             //     ctx.linestyle = 'dashed';
@@ -578,39 +580,104 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
 
-    });
+    });*/
 
      // 自定义边绘制
-    /*network.on("afterDrawing", function(ctx) {
+    network.on("afterDrawing", function(ctx) {
         var edgePositions = network.getPositions();
         edges.forEach(function(edge) {
-            console.log(edge)
-            ctx.strokeStyle = 'black';
+            // console.log(edge)
+            ctx.strokeStyle = edge.color!=null?edge.color.color:"black";
+            ctx.linestyle = edge.dashes?'dashed':"";
             ctx.lineWidth =  2;
             ctx.font="12px Arial";
             var from = edge.from;
             var to = edge.to;
-            var isVirtual = edge.isVirtual;
+            var from_pos = edge.from_pos;
+            var to_pos = edge.to_pos;
+            var hidden = edge.hidden;
             var isKeyPath = edge.is_key_path;
+            var isVirtual = edge.isVirtual;
             var isWavy = edge.is_wavy;
-            // id: edgeKey, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
-            //                 isVirtual: isVirtual,hidden: hidden, is_key_path: is_key, is_wavy: is_wavy
+            var isActual = edge.isActual;
             if(isKeyPath){
                 ctx.strokeStyle = 'red';
+                ctx.lineWidth =  3;
             }
             if(isVirtual){
                 ctx.linestyle = 'dashed';
             }
-            if(isWavy){
-                drawFreeline_new(ctx,from,to);
-            }else{
-                strokeLine(ctx,from,to)
+            if(from==null || to==null){
+                if(isActual){
+                    var start = convertePosition(from_pos[0],from_pos[1],500);
+                    var end = convertePosition(to_pos[0],to_pos[1], 500);
+                }else{
+                    var start = convertePosition(from_pos[0],from_pos[1]);
+                    var end = convertePosition(to_pos[0],to_pos[1]);
+                }
+
+                // var start = from_pos;
+                // var end = to_pos;
+
+                // console.log(start,end)
+                if(from!=null && to==null){
+                    if(start.x==end.x){
+                        start.y = start.y-9;
+                    }
+                    if(start.y==end.y){
+                        start.x = start.x+9;
+                    }
+                }
+                if(to!=null && from==null){
+                    if(start.x==end.x){
+                        if(start.y<end.y){
+                            end.y = end.y-9;
+                        }else if(start.y>end.y){
+                            end.y = end.y+9;
+                        }
+                    }
+                    if(start.y==end.y){
+                        end.x = end.x-9;
+                    }
+                }
+                var nums = 0;
+                if(to != null){
+                    nums = 15;
+                }
+                if(isWavy){
+                    // console.log(start,end)
+                    drawFreeline_new(ctx,start,end,nums);
+                }else{
+                    // console.log(start,end)
+                    strokeLine(ctx,start,end)
+                }
+                if (to != null){
+                    var arrowStart = {x:end.x-7,y:end.y};
+                    var rotate = 0;
+                    if(start.x==end.x){
+                        if(start.y<end.y){
+                            rotate = Math.PI / 2;
+                        }else if(start.y>end.y){
+                            rotate = Math.PI * 3 / 2;
+                        }
+
+                    }
+                    drawArrowhead(ctx,end,rotate,15)
+                }
             }
 
         });
+        nodes.forEach(function(node) {
+            console.log(node)
+            var proName = node.proName;
+            if(proName){
+                var x = node.x;
+                var y = node.y;
+                ctx.fillText(proName,x-70,y-50);
+            }
+        })
 
-
-    });*/
+    });
 
 
     window.myGlobalVar = {
@@ -730,7 +797,7 @@ function drawFreeline(ctx, start, midst, end){
 }
 
 //绘制折线
-function drawFreeline_new(ctx, start, end){
+function drawFreeline_new(ctx, start, end,nums){
     var dx = end.x - start.x;
     var dy = end.y - start.y;
     var length = Math.sqrt(dx * dx + dy * dy);
@@ -738,15 +805,21 @@ function drawFreeline_new(ctx, start, end){
     var unitY = dy / length;
     var startX = start.x;
     var startY = start.y;
-
+    // console.log(end.x, end.y)
     ctx.beginPath();
     ctx.lineTo(startX, startY);
-    for (var i = 0; i < 10; i++) {
+    var i = 0
+    while (startX + unitX * 5 < end.x-nums){
         startX += unitX * 5;
         startY += unitY * 5;
-        ctx.lineTo(startX, i % 2 === 0 ? startY + unitX * 10 : startY - unitX * 10);
+        ctx.lineTo(startX, i % 2 === 0 ? startY + unitX * 3 : startY - unitX * 3);
+        i++
     }
-    ctx.lineTo(end.x, end.y)
+    // for (var i = 0; i < 10; i++) {
+    //     console.log(startX, startY)
+    //
+    // }
+    ctx.lineTo(end.x-nums, end.y)
     ctx.stroke();
 }
 function strokeLine(ctx, start, end) {
@@ -915,16 +988,77 @@ function draw(){
 
 }
 
-function draw_data(){
-    var allsheets = luckysheet.getAllSheets();
-    var sheetData = allsheets[0].data;
+function draw_new(){
+    var rowCount = 0;
+    var sheets = luckysheet.getAllSheets();
+    var sheetData = sheets[0].data;
+    var numbers = {};
+    for (var i = 1; i < sheetData.length; i++) {
+        var row = sheetData[i];
+        if (row.length > 0) {
+            rowCount++;
+            // 判断该行是否完全为空
+            var isEmpty = row.every(function(cell) {
+                return cell === null || cell === undefined || cell.v === '';
+            });
+            if (!isEmpty) {
+                numbers[row[0].m] = i;
+                luckysheet.setCellValue(i, 0, i);
+            }
+        }
+    }
+    // sheets = luckysheet.getAllSheets();
+    // sheetData = sheets[0].data;
+    for (var i = 1; i < sheetData.length; i++) {
+        var row = sheetData[i];
+        if (row.length > 0) {
+            rowCount++;
+            // 判断该行是否完全为空
+            var isEmpty = row.every(function(cell) {
+                return cell === null || cell === undefined || cell.v === '';
+            });
+            if (!isEmpty) {
+                let cellValue = row[5].m;
+                if(cellValue){
+                    var value = numbers[cellValue];
+                    cellValue = String(cellValue);
+                    if(cellValue.indexOf(",") !== -1||cellValue.indexOf("，") !== -1){
+                        var values = cellValue.split(",") || cellValue.split("，");
+                        value = "";
+                        for(var j=0;j<values.length;j++){
+                            var v = numbers[values[j]];
+                            if(v){
+                                value += v+",";
+                            }
+                        }
+                        value = value.slice(0,-1);
+                    }
+
+                    luckysheet.setCellValue(i, 5, value);
+                }
+
+            }
+        }
+    }
     var data = [];
+    var dataActual = [];
+    var identifiers = {};
+    var seenValues = new Set(); // 用于跟踪已经添加过的值
+    var end_date = "";
+    var start_date = "";
     for (let i = 1; i < sheetData.length; i++) {
         var row = sheetData[i];
         if(areAllElementsEmpty(row, row.length)){
             break;
         }
-
+        var value = row[1].m;
+        // 检查值是否已经在 seenValues 集合中
+        if (!seenValues.has(value)) {
+            // 如果值不存在，则添加到 identifiers 和 seenValues 中
+            identifiers[row[0].m] = value;
+            seenValues.add(value);
+        }
+        // console.log(identifiers)
         var rowData = {};
         rowData["identifier"] = row[0]==null ? "" : row[0].m;
         rowData["partition"] = row[1]==null ? "" : row[1].m;
@@ -934,12 +1068,35 @@ function draw_data(){
         rowData["prerequisite"] = row[5]==null ? "" : row[5].m;
         rowData["start_date"] = row[6]==null ? "" : row[6].m;
         rowData["end_date"] = row[7]==null ? "" : row[7].m;
-        rowData["cost"] = row[8]==null ? "" : row[8].m;
+        rowData["cost"] = row[10]==null ? "" : row[10].m;
         data.push(rowData);
+        var rowDataActual = rowData;
+        rowDataActual["start_date"] = row[8]==null ? "" : row[8].m;
+        rowDataActual["end_date"] = row[9]==null ? "" : row[9].m;
+        dataActual.push(rowDataActual);
+        if(start_date == ""){
+            start_date = row[6].m;
+        }
+        end_date = row[7].m;
     }
     var paydata = {
         "work_data":data
     }
+    var paydataActual = {
+        "work_data":dataActual
+    }
+    var numSquares = calculateDaysBetweenDates(start_date,end_date)
+    var startDate = new Date(start_date); // 例如，从 2023 年 12 月 1 日开始
+    window.myGlobalVar.numSquares = numSquares+1;
+    window.myGlobalVar.startDate = startDate;
+    postDrawData(paydata, identifiers);
+    var isActual = true;
+    postDrawData(paydataActual, identifiers, isActual);
+
+}
+
+function postDrawData(paydata,identifiers, isActual=false){
+    console.log(JSON.stringify(paydata))
     $.ajax({
         url: '/data-new',
         type: 'POST',
@@ -950,7 +1107,6 @@ function draw_data(){
         success: function(data) {
             console.log(data);
             var position = data.position;
-
             //网络图
             var info = {
                 "position":position,
@@ -960,27 +1116,49 @@ function draw_data(){
             var edge_info = data.edge_info;
             for (const edgeKey in edge_info) {
                 if (edge_info.hasOwnProperty(edgeKey)) {
+                    var isHidden = false;
+                    if(edgeKey.endsWith("零")||edgeKey.endsWith("一")){
+                        isHidden = true;
+                    }
                     const edgeValue = edge_info[edgeKey];
                     var coord = edgeValue["coord"];
-                    var from_node = coord[0];
-                    var to_node = coord[1];
-                    from_node = DOMtoCanvas(from_node[0]*squareSize+10,from_node[1]*100+200)
-                    to_node = DOMtoCanvas(to_node[0]*squareSize+10,to_node[1]*100+200)
+                    var from_pos = coord[0];
+                    var to_pos = coord[1];
+                    var from_node = getKeyByValue(position, from_pos);
+                    var to_node = getKeyByValue(position, to_pos);
+                    var id = edgeKey;
+                    if(isActual){
+                        id = edgeKey+"_actual";
+                        if(from_node!=null){
+                            from_node = from_node+"_actual";
+                        }
+                        if(to_node!=null){
+                            to_node = to_node+"_actual";
+                        }
+
+                    }
                     var isVirtual = edgeValue["is_virtual"];
                     var is_wavy = edgeValue["is_wavy"];
                     var is_key = edgeValue["is_key"];
 
                     new_edges.push({
-                            id: edgeKey, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
-                            isVirtual: isVirtual,hidden: true, is_key_path: is_key, is_wavy: is_wavy
+                            id: id, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
+                            isVirtual: isVirtual,hidden: isHidden, is_key_path: is_key, is_wavy: is_wavy,
+                            from_pos:from_pos,to_pos:to_pos,
+                            color: {color: is_key?"red":"black",},
+                            lineWidth: {lineWidth: is_key?3:2},
+                            dashes:isVirtual?[5,5]:false,
+                            isActual:isActual,
                     });
                 }
             }
 
-            var convertedInfo = convertData(info);
+            var convertedInfo = convertData(info,identifiers,isActual);
             // 清空节点和边
-            nodes.clear();
-            edges.clear();
+            if(!isActual){
+                nodes.clear();
+                edges.clear();
+            }
             nodes.add(convertedInfo);
             edges.add(new_edges);
         },
@@ -988,15 +1166,25 @@ function draw_data(){
             console.error('Error: ' + error);
         }
     });
+}
 
-
+function getKeyByValue(obj, value) {
+    const entry = Object.entries(obj).find(([k, v]) => JSON.stringify(v) === JSON.stringify(value));
+    return entry ? entry[0] : null;
 }
 
 //判断数组是否全部为空
 function areAllElementsEmpty(row, i) {
     return row.slice(0, i + 1).every(element => element === null);
 }
-function convertData(info,identifiers) {
+
+function convertePosition(x, y, deviate=200) {
+    var domPosition =  {x: x*squareSize, y: y*50+deviate};
+    return  domPosition;
+
+}
+
+function convertData(info,identifiers,isActual) {
     // var squareSize = 5;
     // 创建一个空数组来存储转换后的数据
     var convertedData = [];
@@ -1004,10 +1192,18 @@ function convertData(info,identifiers) {
     // 遍历 position 对象中的每个属性
     for (var key in info.position) {
         if (info.position.hasOwnProperty(key)) {
-            var domPosition = DOMtoCanvas(info.position[key][0]*squareSize+10,info.position[key][1]*100+200)
+            var id = key;
+            if(isActual){
+                id = key + "_actual";
+                var domPosition = convertePosition(info.position[key][0],info.position[key][1]);
+            }else{
+                var domPosition = convertePosition(info.position[key][0],info.position[key][1],500);
+            }
+            // var domPosition = DOMtoCanvas(info.position[key][0]*squareSize+5,info.position[key][1]*50+200)
+
             // 构造新的数据对象并添加到数组中
             convertedData.push({
-                id: key ,
+                id: id ,
                 label: key,
                 x: domPosition.x,
                 y: domPosition.y,
