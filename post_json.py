@@ -47,136 +47,10 @@ url = 'http://127.0.0.1:29000/data-new'
 #                   ]
 # }
 
-payload = {
-  "work_data": [
-    {
-      "identifier": "2",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "施工计划修正",
-      "duration": "4",
-      "prerequisite": "",
-      "start_date": "2006-01-01",
-      "end_date": "2006-01-05",
-      "cost": ""
-    },
-    {
-      "identifier": "7",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "1号楼施工准备",
-      "duration": "6",
-      "prerequisite": "2",
-      "start_date": "2006-01-05",
-      "end_date": "2006-01-11",
-      "cost": ""
-    },
-    {
-      "identifier": "8",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "1号楼机电工程安装",
-      "duration": "26",
-      "prerequisite": "7",
-      "start_date": "2006-01-11",
-      "end_date": "2006-02-06",
-      "cost": ""
-    },
-    {
-      "identifier": "11",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "2号楼施工准备",
-      "duration": "6",
-      "prerequisite": "2",
-      "start_date": "2006-01-05",
-      "end_date": "2006-01-11",
-      "cost": ""
-    },
-    {
-      "identifier": "12",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "2号楼机电工程安装",
-      "duration": "39",
-      "prerequisite": "11",
-      "start_date": "2006-01-11",
-      "end_date": "2006-02-19",
-      "cost": ""
-    },
-    {
-      "identifier": "13",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "2号楼分项工程检验、调试",
-      "duration": "14",
-      "prerequisite": "12",
-      "start_date": "2006-02-19",
-      "end_date": "2006-03-05",
-      "cost": ""
-    },
-    {
-      "identifier": "16",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "3号楼施工准备",
-      "duration": "6",
-      "prerequisite": "2",
-      "start_date": "2006-01-05",
-      "end_date": "2006-01-11",
-      "cost": ""
-    },
-    {
-      "identifier": "17",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "3号楼机电工程安装",
-      "duration": "18",
-      "prerequisite": "16",
-      "start_date": "2006-01-11",
-      "end_date": "2006-01-29",
-      "cost": ""
-    },
-    {
-      "identifier": "18",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "3号楼分项工程检验、调试",
-      "duration": "8",
-      "prerequisite": "17",
-      "start_date": "2006-01-29",
-      "end_date": "2006-02-06",
-      "cost": ""
-    },
-    {
-      "identifier": "20",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "全系统联调、试运行",
-      "duration": "10",
-      "prerequisite": "8,13,18",
-      "start_date": "2006-03-05",
-      "end_date": "2006-03-15",
-      "cost": ""
-    },
-    {
-      "identifier": "21",
-      "partition": "施工",
-      "classify": "施工",
-      "name": "综合交工验收",
-      "duration": "5",
-      "prerequisite": "20",
-      "start_date": "2006-03-15",
-      "end_date": "2006-03-20",
-      "cost": ""
-    }
-  ]
-}
-
 # payload = {
 #   "work_data": [
 #     {
-#       "identifier": "A",
+#       "identifier": "2",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "施工计划修正",
@@ -187,117 +61,243 @@ payload = {
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "B",
+#       "identifier": "7",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "1号楼施工准备",
 #       "duration": "6",
-#       "prerequisite": "A",
+#       "prerequisite": "2",
 #       "start_date": "2006-01-05",
 #       "end_date": "2006-01-11",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "C",
+#       "identifier": "8",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "1号楼机电工程安装",
 #       "duration": "26",
-#       "prerequisite": "B",
+#       "prerequisite": "7",
 #       "start_date": "2006-01-11",
 #       "end_date": "2006-02-06",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "D",
+#       "identifier": "11",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "2号楼施工准备",
 #       "duration": "6",
-#       "prerequisite": "A",
+#       "prerequisite": "2",
 #       "start_date": "2006-01-05",
 #       "end_date": "2006-01-11",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "E",
+#       "identifier": "12",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "2号楼机电工程安装",
 #       "duration": "39",
-#       "prerequisite": "D",
+#       "prerequisite": "11",
 #       "start_date": "2006-01-11",
 #       "end_date": "2006-02-19",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "F",
+#       "identifier": "13",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "2号楼分项工程检验、调试",
 #       "duration": "14",
-#       "prerequisite": "E",
+#       "prerequisite": "12",
 #       "start_date": "2006-02-19",
 #       "end_date": "2006-03-05",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "G",
+#       "identifier": "16",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "3号楼施工准备",
 #       "duration": "6",
-#       "prerequisite": "A",
+#       "prerequisite": "2",
 #       "start_date": "2006-01-05",
 #       "end_date": "2006-01-11",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "H",
+#       "identifier": "17",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "3号楼机电工程安装",
 #       "duration": "18",
-#       "prerequisite": "G",
+#       "prerequisite": "16",
 #       "start_date": "2006-01-11",
 #       "end_date": "2006-01-29",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "I",
+#       "identifier": "18",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "3号楼分项工程检验、调试",
 #       "duration": "8",
-#       "prerequisite": "H",
+#       "prerequisite": "17",
 #       "start_date": "2006-01-29",
 #       "end_date": "2006-02-06",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "J",
+#       "identifier": "20",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "全系统联调、试运行",
 #       "duration": "10",
-#       "prerequisite": "C,F,I",
+#       "prerequisite": "8,13,18",
 #       "start_date": "2006-03-05",
 #       "end_date": "2006-03-15",
 #       "cost": ""
 #     },
 #     {
-#       "identifier": "K",
+#       "identifier": "21",
 #       "partition": "施工",
 #       "classify": "施工",
 #       "name": "综合交工验收",
-#       "duration": "13",
-#       "prerequisite": "J",
+#       "duration": "5",
+#       "prerequisite": "20",
 #       "start_date": "2006-03-15",
-#       "end_date": "2006-03-28",
+#       "end_date": "2006-03-20",
 #       "cost": ""
 #     }
 #   ]
 # }
+
+payload = {
+  "work_data": [
+    {
+      "identifier": "A",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "施工计划修正",
+      "duration": "4",
+      "prerequisite": "",
+      "start_date": "2006-01-01",
+      "end_date": "2006-01-05",
+      "cost": ""
+    },
+    {
+      "identifier": "B",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "1号楼施工准备",
+      "duration": "6",
+      "prerequisite": "A",
+      "start_date": "2006-01-05",
+      "end_date": "2006-01-11",
+      "cost": ""
+    },
+    {
+      "identifier": "C",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "1号楼机电工程安装",
+      "duration": "26",
+      "prerequisite": "B",
+      "start_date": "2006-01-11",
+      "end_date": "2006-02-06",
+      "cost": ""
+    },
+    {
+      "identifier": "D",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "2号楼施工准备",
+      "duration": "6",
+      "prerequisite": "A",
+      "start_date": "2006-01-05",
+      "end_date": "2006-01-11",
+      "cost": ""
+    },
+    {
+      "identifier": "E",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "2号楼机电工程安装",
+      "duration": "39",
+      "prerequisite": "D",
+      "start_date": "2006-01-11",
+      "end_date": "2006-02-19",
+      "cost": ""
+    },
+    {
+      "identifier": "F",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "2号楼分项工程检验、调试",
+      "duration": "14",
+      "prerequisite": "E",
+      "start_date": "2006-02-19",
+      "end_date": "2006-03-05",
+      "cost": ""
+    },
+    {
+      "identifier": "G",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "3号楼施工准备",
+      "duration": "6",
+      "prerequisite": "A",
+      "start_date": "2006-01-05",
+      "end_date": "2006-01-11",
+      "cost": ""
+    },
+    {
+      "identifier": "H",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "3号楼机电工程安装",
+      "duration": "18",
+      "prerequisite": "G",
+      "start_date": "2006-01-11",
+      "end_date": "2006-01-29",
+      "cost": ""
+    },
+    {
+      "identifier": "I",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "3号楼分项工程检验、调试",
+      "duration": "8",
+      "prerequisite": "H",
+      "start_date": "2006-01-29",
+      "end_date": "2006-02-06",
+      "cost": ""
+    },
+    {
+      "identifier": "J",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "全系统联调、试运行",
+      "duration": "10",
+      "prerequisite": "C,F,I",
+      "start_date": "2006-03-05",
+      "end_date": "2006-03-15",
+      "cost": ""
+    },
+    {
+      "identifier": "K",
+      "partition": "施工",
+      "classify": "施工",
+      "name": "综合交工验收",
+      "duration": "13",
+      "prerequisite": "J",
+      "start_date": "2006-03-15",
+      "end_date": "2006-03-28",
+      "cost": ""
+    }
+  ]
+}
 
 # payload = {
 #   "work_data": [

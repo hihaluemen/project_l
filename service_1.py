@@ -83,7 +83,7 @@ async def receive_data_new(work_data: WorkData):
     # return {"workdata": work_data}
     work_l = get_work_from_json(work_data.work_data)
     print(work_l)
-    work_name = get_work_name(work_l)
+    # work_name = get_work_name(work_l)
     adjacency_list = get_adjacency(work_l)
     print(adjacency_list)
     predecessor_dict = get_all_pre(work_l, adjacency_list)
@@ -103,7 +103,7 @@ async def receive_data_new(work_data: WorkData):
     ans = dict()
     ans['position'] = position
     ans['edge_info'] = edge_info
-    ans['work_name'] = work_name
+    # ans['work_name'] = work_name
     # ans['new_edge_info'] = new_edge_info
 
     return ans

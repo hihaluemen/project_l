@@ -393,6 +393,16 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
             print('=====')
         else:
             value['is_key'] = False
+
+    work_names = get_work_name(works_list)
+    for key, value in xu_result.items():
+        if key in work_names:
+            value['name'] = work_names[key]
+        elif "斜边" in key and "的一" in key:
+            value['name'] = work_names[key[3]]
+        else:
+            value['name'] = ''
+
     print('虚线处理结果为：')
     print(xu_result)
 

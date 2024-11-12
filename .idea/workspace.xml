@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="测试更新">
+    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="增加返回值">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/New_Net_Position.py" beforeDir="false" afterPath="$PROJECT_DIR$/New_Net_Position.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/post_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/post_json.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/service_1.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -310,7 +311,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731071787655</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="更新关键路径判断逻辑；添加完整数字的判断">
+      <option name="closed" value="true" />
+      <created>1731403093773</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1731403093773</updated>
+    </task>
+    <task id="LOCAL-00016" summary="增加返回值">
+      <option name="closed" value="true" />
+      <created>1731413510024</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1731413510024</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -338,6 +355,8 @@
     <MESSAGE value="更新点的序号" />
     <MESSAGE value="关键路径判断更新；且虚线部分处理更新" />
     <MESSAGE value="测试更新" />
-    <option name="LAST_COMMIT_MESSAGE" value="测试更新" />
+    <MESSAGE value="更新关键路径判断逻辑；添加完整数字的判断" />
+    <MESSAGE value="增加返回值" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加返回值" />
   </component>
 </project>
