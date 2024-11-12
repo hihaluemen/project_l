@@ -379,14 +379,18 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
     # for key, value in xu_result.items():
     #     value['is_key'] = any(node in key for node in key_path)
 
+    print("再次判断key_path")
     for key, value in xu_result.items():
-        extracted_chars = re.findall(r'[A-Za-z0-9]', key)
+        extracted_chars = re.findall(r'[A-Za-z0-9]+', key)
         tmp_n = 0
         for char in extracted_chars:
             if char in key_path:
                 tmp_n += 1
-        if len(extracted_chars) == tmp_n and not value['is_wavy']:
+        if len(extracted_chars) == tmp_n and not value['is_wavy'] and tmp_n > 0:
             value['is_key'] = True
+            print(f"key is {key}")
+            print(f"value is {value}")
+            print('=====')
         else:
             value['is_key'] = False
     print('虚线处理结果为：')

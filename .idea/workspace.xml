@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="更新点的序号">
+    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="测试更新">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/New_Net_Position.py" beforeDir="false" afterPath="$PROJECT_DIR$/New_Net_Position.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/service_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/post_json.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -294,7 +294,23 @@
       <option name="project" value="LOCAL" />
       <updated>1730884020096</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="关键路径判断更新；且虚线部分处理更新">
+      <option name="closed" value="true" />
+      <created>1731071752572</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1731071752572</updated>
+    </task>
+    <task id="LOCAL-00014" summary="测试更新">
+      <option name="closed" value="true" />
+      <created>1731071787655</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1731071787655</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -320,6 +336,8 @@
     <MESSAGE value="更新新的画法，和测试" />
     <MESSAGE value="更新新的画法，和测试1101" />
     <MESSAGE value="更新点的序号" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新点的序号" />
+    <MESSAGE value="关键路径判断更新；且虚线部分处理更新" />
+    <MESSAGE value="测试更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="测试更新" />
   </component>
 </project>
