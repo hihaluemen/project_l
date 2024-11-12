@@ -14,7 +14,7 @@ from back_1 import get_all_pre, get_adjacency, get_key_path
 from Net_Position import get_position
 import templates
 from excel_parse import get_worls, get_work_from_json
-from New_Net_Position import get_new_position_info, deal_position
+from New_Net_Position import get_new_position_info, deal_position, get_work_name
 
 app = FastAPI()
 app.mount("/page", StaticFiles(directory="./templates", html=True), name="page")
@@ -83,6 +83,7 @@ async def receive_data_new(work_data: WorkData):
     # return {"workdata": work_data}
     work_l = get_work_from_json(work_data.work_data)
     print(work_l)
+    work_name = get_work_name(work_l)
     adjacency_list = get_adjacency(work_l)
     print(adjacency_list)
     predecessor_dict = get_all_pre(work_l, adjacency_list)
@@ -98,9 +99,11 @@ async def receive_data_new(work_data: WorkData):
     )
     position = deal_position(position)
     # new_edge_info = find_longest_path(position, edge_info)
+
     ans = dict()
     ans['position'] = position
     ans['edge_info'] = edge_info
+    ans['work_name'] = work_name
     # ans['new_edge_info'] = new_edge_info
 
     return ans

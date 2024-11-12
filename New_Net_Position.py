@@ -399,6 +399,13 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
     return xu_result, visible_points
 
 
+def get_work_name(works_list):
+    work_names = {}
+    for work in works_list:
+        work_names[work[0]] = work[1]
+    return work_names
+
+
 def deal_position(positions):
     if not positions:
         return {}
