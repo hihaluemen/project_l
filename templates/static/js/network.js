@@ -1116,9 +1116,9 @@ function draw_new(){
         if(areAllElementsEmpty(row, row.length)){
             break;
         }
-        if (row[3].m == "项目开始" || row[3].m == "项目结束") {
-            continue;
-        }
+        // if (row[3].m == "项目开始" || row[3].m == "项目结束") {
+        //     continue;
+        // }
         var rowData = {};
         rowData["identifier"] = row[0]==null ? "" : row[0].m;
         rowData["partition"] = row[1]==null ? "" : row[1].m;
