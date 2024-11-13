@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
         edges.forEach(function(edge) {
             // console.log(edge)
             ctx.strokeStyle = edge.color!=null?edge.color.color:"black";
-            ctx.linestyle = edge.dashes?'dashed':"";
+            // ctx.linestyle = edge.dashes?'dashed':"";
             ctx.lineWidth =  2;
             ctx.font="12px Arial";
             var from = edge.from;
@@ -605,8 +605,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.lineWidth =  3;
             }
             if(isVirtual){
-                ctx.linestyle = 'dashed';
+                ctx.setLineDash([5,5]);
+            }else{
+                ctx.setLineDash([]);
             }
+            // console.log(ctx)
             if(from==null || to==null){
                 if(isActual){
                     var start = convertePosition(from_pos[0],from_pos[1],500);
@@ -664,11 +667,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     drawArrowhead(ctx,end,rotate,15)
                 }
+                ctx.fillText(edge.label,(end.x-start.x)/2+start.x,start.y-10);
             }
 
         });
         nodes.forEach(function(node) {
-            console.log(node)
+            // console.log(node)
             var proName = node.proName;
             if(proName){
                 var x = node.x;
@@ -946,7 +950,7 @@ function draw(){
                     }
                     new_edges.push({
                             id: edgeKey, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
-                            zigzag: is_freeline,is_virtual: isVirtual,hidden: hidden,isTop:isTop,
+                            zigzag: is_freeline,isVirtual: isVirtual,hidden: hidden,isTop:isTop,
                             color: {color: edgeValue["is_key_path"]?"red":"black",},
                             dashes:isVirtual?[5,5]:false,midistX:midistX,
                             is_key_path: edgeValue["is_key_path"]+""
@@ -987,12 +991,69 @@ function draw(){
 
 
 }
+//判断一个时间范围range1是否包含另一个时间范围range2
+function isRangeContained(range1, range2) {
+  return range1.start <= range2.start && range1.end >= range2.end;
+}
 
 function draw_new(){
     var rowCount = 0;
     var sheets = luckysheet.getAllSheets();
     var sheetData = sheets[0].data;
     var numbers = {};
+    var identifiers = {};
+    var seenValues = new Set(); // 用于跟踪已经添加过的值
+    var deleteValues = new Set();
+    for (var i = 1; i < sheetData.length; i++) {
+        var row = sheetData[i];
+        if (row.length > 0) {
+            // 判断该行是否完全为空
+            var isEmpty = row.every(function(cell) {
+                return cell === null || cell === undefined || cell.v === '';
+            });
+            if (!isEmpty) {
+                var projectName1 = row[3].m;
+                if(projectName1 != "项目开始" && projectName1 != "项目结束"){
+                    const leadingSpaces = projectName1.match(/^\s*/)[0];
+                    const spaceCount = leadingSpaces.length;
+                    for (var j = i+1; j < sheetData.length; j++) {
+                        var row1 = sheetData[j];
+                        if (row1.length > 0) {
+                            // 判断该行是否完全为空
+                            var isEmpty = row1.every(function(cell) {
+                                return cell === null || cell === undefined || cell.v === '';
+                            });
+                            if (!isEmpty) {
+                                var projectName2 = row1[3].m;
+                                if (projectName2 != "项目开始" && projectName2 != "项目结束") {
+                                    const leadingSpaces2 = projectName2.match(/^\s*/)[0];
+                                    const spaceCount2 = leadingSpaces2.length;
+                                    if (spaceCount2 > spaceCount) {
+                                        luckysheet.setCellValue(j, 1, projectName1);
+                                        deleteValues.add(i);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    console.log("deleteValues",deleteValues)
+    // 将Set转换为数组
+    const rowsArray = Array.from(deleteValues);
+    // 对数组进行降序排序
+    const sortedRows = rowsArray.sort((a, b) => b - a);
+    sortedRows.forEach((value) => {
+        luckysheet.deleteRow(parseInt(value),parseInt(value));
+    });
+    // 刷新表格
+    luckysheet.refresh();
+    var sheets = luckysheet.getAllSheets();
+    var sheetData = sheets[0].data;
     for (var i = 1; i < sheetData.length; i++) {
         var row = sheetData[i];
         if (row.length > 0) {
@@ -1004,6 +1065,12 @@ function draw_new(){
             if (!isEmpty) {
                 numbers[row[0].m] = i;
                 luckysheet.setCellValue(i, 0, i);
+                var value = row[1].m;
+                if (!seenValues.has(value)) {
+                    // 如果值不存在，则添加到 identifiers 和 seenValues 中
+                    identifiers[i] = value;
+                    seenValues.add(value);
+                }
             }
         }
     }
@@ -1018,8 +1085,8 @@ function draw_new(){
                 return cell === null || cell === undefined || cell.v === '';
             });
             if (!isEmpty) {
-                let cellValue = row[5].m;
-                if(cellValue){
+                if(row[5] && row[5].m){
+                    let cellValue = row[5].m;
                     var value = numbers[cellValue];
                     cellValue = String(cellValue);
                     if(cellValue.indexOf(",") !== -1||cellValue.indexOf("，") !== -1){
@@ -1042,8 +1109,6 @@ function draw_new(){
     }
     var data = [];
     var dataActual = [];
-    var identifiers = {};
-    var seenValues = new Set(); // 用于跟踪已经添加过的值
     var end_date = "";
     var start_date = "";
     for (let i = 1; i < sheetData.length; i++) {
@@ -1051,14 +1116,9 @@ function draw_new(){
         if(areAllElementsEmpty(row, row.length)){
             break;
         }
-        var value = row[1].m;
-        // 检查值是否已经在 seenValues 集合中
-        if (!seenValues.has(value)) {
-            // 如果值不存在，则添加到 identifiers 和 seenValues 中
-            identifiers[row[0].m] = value;
-            seenValues.add(value);
+        if (row[3].m == "项目开始" || row[3].m == "项目结束") {
+            continue;
         }
-        // console.log(identifiers)
         var rowData = {};
         rowData["identifier"] = row[0]==null ? "" : row[0].m;
         rowData["partition"] = row[1]==null ? "" : row[1].m;
@@ -1070,14 +1130,25 @@ function draw_new(){
         rowData["end_date"] = row[7]==null ? "" : row[7].m;
         rowData["cost"] = row[10]==null ? "" : row[10].m;
         data.push(rowData);
-        var rowDataActual = rowData;
+        var rowDataActual = {...rowData};
         rowDataActual["start_date"] = row[8]==null ? "" : row[8].m;
         rowDataActual["end_date"] = row[9]==null ? "" : row[9].m;
         dataActual.push(rowDataActual);
+        //开始时间和结束时间
         if(start_date == ""){
             start_date = row[6].m;
+            end_date = row[7].m;
         }
-        end_date = row[7].m;
+        var existingEndDate = new Date(end_date);
+        var newEndDate = new Date(row[7].m);
+        var newEndDate2 = new Date(row[9].m);
+        // 比较日期并更新 rowDataActual 的 end_date
+        if (newEndDate > existingEndDate) {
+           end_date = row[7].m;
+        }
+        if (newEndDate2 > existingEndDate) {
+           end_date = row[9].m;;
+        }
     }
     var paydata = {
         "work_data":data
@@ -1085,6 +1156,7 @@ function draw_new(){
     var paydataActual = {
         "work_data":dataActual
     }
+    console.log(start_date,end_date)
     var numSquares = calculateDaysBetweenDates(start_date,end_date)
     var startDate = new Date(start_date); // 例如，从 2023 年 12 月 1 日开始
     window.myGlobalVar.numSquares = numSquares+1;
@@ -1140,9 +1212,9 @@ function postDrawData(paydata,identifiers, isActual=false){
                     var isVirtual = edgeValue["is_virtual"];
                     var is_wavy = edgeValue["is_wavy"];
                     var is_key = edgeValue["is_key"];
-
+                    var name = edgeValue["name"];
                     new_edges.push({
-                            id: id, from: from_node, to: to_node, label: edgeKey,arrows: 'to',
+                            id: id, from: from_node, to: to_node, label: name,arrows: 'to',
                             isVirtual: isVirtual,hidden: isHidden, is_key_path: is_key, is_wavy: is_wavy,
                             from_pos:from_pos,to_pos:to_pos,
                             color: {color: is_key?"red":"black",},
@@ -1195,9 +1267,9 @@ function convertData(info,identifiers,isActual) {
             var id = key;
             if(isActual){
                 id = key + "_actual";
-                var domPosition = convertePosition(info.position[key][0],info.position[key][1]);
-            }else{
                 var domPosition = convertePosition(info.position[key][0],info.position[key][1],500);
+            }else{
+                var domPosition = convertePosition(info.position[key][0],info.position[key][1]);
             }
             // var domPosition = DOMtoCanvas(info.position[key][0]*squareSize+5,info.position[key][1]*50+200)
 
