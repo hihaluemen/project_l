@@ -406,6 +406,22 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
     print('虚线处理结果为：')
     print(xu_result)
 
+    xu_result["项目开始"] = {}
+    xu_result["项目开始"]["coord"] = [[0, 0], [0, 0]]
+    xu_result["项目开始"]["name"] = "项目开始"
+    xu_result["项目开始"]["need_right_angle"] = "None"
+    xu_result["项目开始"]["is_wavy"] = False
+    xu_result["项目开始"]["is_virtual"] = False
+    xu_result["项目开始"]["is_key"] = True
+
+    xu_result["项目结束"] = {}
+    xu_result["项目结束"]["coord"] = [xu_result[key_path[-1]]['coord'][1], xu_result[key_path[-1]]['coord'][1]]
+    xu_result["项目结束"]["name"] = "项目结束"
+    xu_result["项目结束"]["need_right_angle"] = "None"
+    xu_result["项目结束"]["is_wavy"] = False
+    xu_result["项目结束"]["is_virtual"] = False
+    xu_result["项目结束"]["is_key"] = True
+
     return xu_result, visible_points
 
 
