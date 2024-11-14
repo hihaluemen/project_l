@@ -375,9 +375,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 border: 'black'
             }
         },
-        interaction: {
-            hover: true
-        }
+        // interaction: {
+        //     hover: true
+        // }
     };
     network = new vis.Network(container, data, options);
 
@@ -590,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.strokeStyle = edge.color!=null?edge.color.color:"black";
             // ctx.linestyle = edge.dashes?'dashed':"";
             ctx.lineWidth =  2;
-            ctx.font="12px Arial";
+            ctx.font="10px Arial";
             var from = edge.from;
             var to = edge.to;
             var from_pos = edge.from_pos;
@@ -610,14 +610,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 ctx.setLineDash([]);
             }
             // console.log(ctx)
+            if(isActual){
+                var start = convertePosition(from_pos[0],from_pos[1],500);
+                var end = convertePosition(to_pos[0],to_pos[1], 500);
+            }else{
+                var start = convertePosition(from_pos[0],from_pos[1]);
+                var end = convertePosition(to_pos[0],to_pos[1]);
+            }
             if(from==null || to==null){
-                if(isActual){
-                    var start = convertePosition(from_pos[0],from_pos[1],500);
-                    var end = convertePosition(to_pos[0],to_pos[1], 500);
-                }else{
-                    var start = convertePosition(from_pos[0],from_pos[1]);
-                    var end = convertePosition(to_pos[0],to_pos[1]);
-                }
 
                 // var start = from_pos;
                 // var end = to_pos;
@@ -667,8 +667,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     drawArrowhead(ctx,end,rotate,15)
                 }
-                ctx.fillText(edge.label,(end.x-start.x)/2+start.x,start.y-10);
             }
+            ctx.fillText(edge.labelName,(end.x-start.x)/2+start.x,start.y-10);
 
         });
         nodes.forEach(function(node) {
@@ -1116,9 +1116,9 @@ function draw_new(){
         if(areAllElementsEmpty(row, row.length)){
             break;
         }
-        // if (row[3].m == "项目开始" || row[3].m == "项目结束") {
-        //     continue;
-        // }
+        if (row[3].m == "项目开始" || row[3].m == "项目结束") {
+            continue;
+        }
         var rowData = {};
         rowData["identifier"] = row[0]==null ? "" : row[0].m;
         rowData["partition"] = row[1]==null ? "" : row[1].m;
@@ -1161,6 +1161,8 @@ function draw_new(){
     var startDate = new Date(start_date); // 例如，从 2023 年 12 月 1 日开始
     window.myGlobalVar.numSquares = numSquares+1;
     window.myGlobalVar.startDate = startDate;
+    nodes.clear();
+    edges.clear();
     postDrawData(paydata, identifiers);
     var isActual = true;
     postDrawData(paydataActual, identifiers, isActual);
@@ -1196,6 +1198,12 @@ function postDrawData(paydata,identifiers, isActual=false){
                     var coord = edgeValue["coord"];
                     var from_pos = coord[0];
                     var to_pos = coord[1];
+                    // if (edgeKey == "项目开始"){
+                    //     from_pos  = [from_pos[0]-1,from_pos[1]]
+                    // }
+                    // if (edgeKey == "项目结束"){
+                    //     to_pos  = [from_pos[0]+1,from_pos[1]]
+                    // }
                     var from_node = getKeyByValue(position, from_pos);
                     var to_node = getKeyByValue(position, to_pos);
                     var id = edgeKey;
@@ -1209,12 +1217,13 @@ function postDrawData(paydata,identifiers, isActual=false){
                         }
 
                     }
+
                     var isVirtual = edgeValue["is_virtual"];
                     var is_wavy = edgeValue["is_wavy"];
                     var is_key = edgeValue["is_key"];
                     var name = edgeValue["name"];
                     new_edges.push({
-                            id: id, from: from_node, to: to_node, label: name,arrows: 'to',
+                            id: id, from: from_node, to: to_node, labelName: name,arrows: 'to',
                             isVirtual: isVirtual,hidden: isHidden, is_key_path: is_key, is_wavy: is_wavy,
                             from_pos:from_pos,to_pos:to_pos,
                             color: {color: is_key?"red":"black",},
