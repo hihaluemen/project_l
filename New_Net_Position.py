@@ -407,7 +407,7 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
     print(xu_result)
 
     xu_result["项目开始"] = {}
-    xu_result["项目开始"]["coord"] = [[-1, 0], [0, 0]]
+    xu_result["项目开始"]["coord"] = [[-5, 0], [0, 0]]
     xu_result["项目开始"]["name"] = "项目开始"
     xu_result["项目开始"]["need_right_angle"] = "None"
     xu_result["项目开始"]["is_wavy"] = False
@@ -417,7 +417,7 @@ def get_new_position_info(key_path, predecessor_dict, adjacency_dict, works_list
     xu_result["项目结束"] = {}
     xu_result["项目结束"]["coord"] = [
         xu_result[key_path[-1]]['coord'][1],
-        [xu_result[key_path[-1]]['coord'][1][0] + 1, xu_result[key_path[-1]]['coord'][1][1]]
+        [xu_result[key_path[-1]]['coord'][1][0] + 5, xu_result[key_path[-1]]['coord'][1][1]]
     ]
     xu_result["项目结束"]["name"] = "项目结束"
     xu_result["项目结束"]["need_right_angle"] = "None"
@@ -440,15 +440,15 @@ def deal_position(positions):
         return {}
 
     new_positions = dict()
-    new_positions[0] = [-1, 0]
+    new_positions[0] = [-5, 0]
     if len(positions) == 1:
         new_positions[1] = positions[0]
-        new_positions[2] = [positions[0][0] + 1, positions[0][1]]
+        new_positions[2] = [positions[0][0] + 5, positions[0][1]]
         return new_positions
 
     for i, point in enumerate(positions[1:], 1):
         new_positions[i] = point
-    new_positions[f"{len(positions)}"] = [positions[-1][0] + 1, positions[-1][1]]
+    new_positions[f"{len(positions)}"] = [positions[-1][0] + 5, positions[-1][1]]
     return new_positions
 
 
