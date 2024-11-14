@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="在edge_info里加name字段">
+    <list default="true" id="1ea385a1-3be5-4d80-a3a6-a3efbbd53455" name="Changes" comment="增加“项目开始”和项目结束">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/New_Net_Position.py" beforeDir="false" afterPath="$PROJECT_DIR$/New_Net_Position.py" afterDir="false" />
     </list>
@@ -333,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731422008030</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="增加“项目开始”和项目结束">
+      <option name="closed" value="true" />
+      <created>1731504497666</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1731504497666</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -364,6 +372,7 @@
     <MESSAGE value="更新关键路径判断逻辑；添加完整数字的判断" />
     <MESSAGE value="增加返回值" />
     <MESSAGE value="在edge_info里加name字段" />
-    <option name="LAST_COMMIT_MESSAGE" value="在edge_info里加name字段" />
+    <MESSAGE value="增加“项目开始”和项目结束" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加“项目开始”和项目结束" />
   </component>
 </project>
