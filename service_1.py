@@ -4,17 +4,17 @@
 # @Author  : hihaluemen
 # @File    : service_1.py
 # main.py
-from fastapi import FastAPI, HTTPException, Request, Form
-from pydantic import BaseModel, Field
-from typing import Dict, List, Any, Optional, Union
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
+from typing import Dict, List, Optional, Union
 import uvicorn
 from starlette.staticfiles import StaticFiles
 
-from back_1 import get_all_pre, get_adjacency, get_key_path
-from Net_Position import get_position
+from module.back_1 import get_all_pre, get_adjacency, get_key_path
+from module.Net_Position import get_position
 import templates
-from excel_parse import get_worls, get_work_from_json
-from New_Net_Position import get_new_position_info, deal_position, get_work_name
+from module.excel_parse import get_worls, get_work_from_json
+from module.New_Net_Position import get_new_position_info, deal_position
 
 app = FastAPI()
 app.mount("/page", StaticFiles(directory="./templates", html=True), name="page")

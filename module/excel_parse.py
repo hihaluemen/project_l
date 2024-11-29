@@ -118,5 +118,5 @@ def get_work_from_json(json_data: list) -> list:
 
 
 if __name__ == "__main__":
-    file_path = './data/1.xlsx'
+    file_path = '../data/1.xlsx'
     get_worls(file_path)

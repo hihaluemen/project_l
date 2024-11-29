@@ -9,7 +9,7 @@ from matplotlib import font_manager
 from datetime import datetime
 
 # 设置中文字体
-font_path = 'data/simsun.ttc'  # 请替换为您系统中的中文字体路径
+font_path = './data/simsun.ttc'  # 请替换为您系统中的中文字体路径
 font_prop = font_manager.FontProperties(fname=font_path)
 plt.rcParams['font.family'] = font_prop.get_name()
 
